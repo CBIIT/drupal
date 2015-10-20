@@ -1,0 +1,131 @@
+diff --git a/modules/system/system.admin.inc b/modules/system/system.admin.inc
+index e9682e7..f897973 100644
+--- a/modules/system/system.admin.inc
++++ b/modules/system/system.admin.inc
+@@ -459,15 +459,13 @@ function system_theme_settings($form, &$form_state, $key = '') {
+     $form['logo'] = array(
+       '#type' => 'fieldset',
+       '#title' => t('Logo image settings'),
+-      '#description' => t('If toggled on, the following logo will be displayed.'),
+       '#attributes' => array('class' => array('theme-settings-bottom')),
+     );
+     $form['logo']['default_logo'] = array(
+       '#type' => 'checkbox',
+-      '#title' => t('Use the default logo'),
++      '#title' => t('Use the default logo supplied by the theme'),
+       '#default_value' => theme_get_setting('default_logo', $key),
+       '#tree' => FALSE,
+-      '#description' => t('Check here if you want the theme to use the logo supplied with it.')
+     );
+     $form['logo']['settings'] = array(
+       '#type' => 'container',
+@@ -481,7 +479,6 @@ function system_theme_settings($form, &$form_state, $key = '') {
+     $form['logo']['settings']['logo_path'] = array(
+       '#type' => 'textfield',
+       '#title' => t('Path to custom logo'),
+-      '#description' => t('The path to the file you would like to use as your logo file instead of the default logo.'),
+       '#default_value' => theme_get_setting('logo_path', $key),
+     );
+     $form['logo']['settings']['logo_upload'] = array(
+@@ -500,9 +497,8 @@ function system_theme_settings($form, &$form_state, $key = '') {
+     );
+     $form['favicon']['default_favicon'] = array(
+       '#type' => 'checkbox',
+-      '#title' => t('Use the default shortcut icon.'),
++      '#title' => t('Use the default shortcut icon supplied by the theme'),
+       '#default_value' => theme_get_setting('default_favicon', $key),
+-      '#description' => t('Check here if you want the theme to use the default shortcut icon.')
+     );
+     $form['favicon']['settings'] = array(
+       '#type' => 'container',
+@@ -516,7 +512,6 @@ function system_theme_settings($form, &$form_state, $key = '') {
+     $form['favicon']['settings']['favicon_path'] = array(
+       '#type' => 'textfield',
+       '#title' => t('Path to custom icon'),
+-      '#description' => t('The path to the image file you would like to use as your custom shortcut icon.'),
+       '#default_value' => theme_get_setting('favicon_path', $key),
+     );
+     $form['favicon']['settings']['favicon_upload'] = array(
+@@ -526,7 +521,8 @@ function system_theme_settings($form, &$form_state, $key = '') {
+     );
+   }
+ 
+-  // Inject human-friendly values for logo and favicon.
++  // Inject human-friendly values and form element descriptions for logo and
++  // favicon.
+   foreach (array('logo' => 'logo.png', 'favicon' => 'favicon.ico') as $type => $default) {
+     if (isset($form[$type]['settings'][$type . '_path'])) {
+       $element = &$form[$type]['settings'][$type . '_path'];
+@@ -539,6 +535,26 @@ function system_theme_settings($form, &$form_state, $key = '') {
+         $friendly_path = file_uri_target($original_path);
+         $element['#default_value'] = $friendly_path;
+       }
++
++      // Prepare local file path for description.
++      if ($original_path && isset($friendly_path)) {
++        $local_file = strtr($original_path, array('public:/' => variable_get('file_public_path', conf_path() . '/files')));
++      }
++      elseif ($key) {
++        $local_file = drupal_get_path('theme', $key) . '/' . $default;
++      }
++      elseif (!empty($original_path)) {
++        $local_file = $original_path;
++      }
++      else {
++        $local_file = path_to_theme() . '/' . $default;
++      }
++
++      $element['#description'] = t('Examples: <code>@implicit-public-file</code> (for a file in the public filesystem), <code>@explicit-file</code>, or <code>@local-file</code>.', array(
++        '@implicit-public-file' => isset($friendly_path) ? $friendly_path : $default,
++        '@explicit-file' => file_uri_scheme($original_path) !== FALSE ? $original_path : 'public://' . $default,
++        '@local-file' => $local_file,
++      ));
+     }
+   }
+ 
+diff --git a/modules/system/system.test b/modules/system/system.test
+index abd21aa..268f6d6 100644
+--- a/modules/system/system.test
++++ b/modules/system/system.test
+@@ -1677,6 +1677,40 @@ class SystemThemeFunctionalTest extends DrupalWebTestCase {
+       $this->assertNoText('The custom logo path is invalid.');
+       $this->assertFieldByName('logo_path', $expected['form']);
+ 
++      // Verify logo path examples.
++      $elements = $this->xpath('//div[contains(@class, :item)]/div[@class=:description]/code', array(
++        ':item' => 'form-item-logo-path',
++        ':description' => 'description',
++      ));
++      // Expected default values (if all else fails).
++      $implicit_public_file = 'logo.png';
++      $explicit_file = 'public://logo.png';
++      $local_file = $default_theme_path . '/logo.png';
++      // Adjust for fully qualified stream wrapper URI in public filesystem.
++      if (file_uri_scheme($input) == 'public') {
++        $implicit_public_file = file_uri_target($input);
++        $explicit_file = $input;
++        $local_file = strtr($input, array('public:/' => variable_get('file_public_path', conf_path() . '/files')));
++      }
++      // Adjust for fully qualified stream wrapper URI elsewhere.
++      elseif (file_uri_scheme($input) !== FALSE) {
++        $explicit_file = $input;
++      }
++      // Adjust for relative path within public filesystem.
++      elseif ($input == file_uri_target($file->uri)) {
++        $implicit_public_file = $input;
++        $explicit_file = 'public://' . $input;
++        $local_file = variable_get('file_public_path', conf_path() . '/files') . '/' . $input;
++      }
++      // Adjust for relative path not in public filesystem.
++      else {
++        $local_file = $input;
++      }
++
++      $this->assertEqual((string) $elements[0], $implicit_public_file);
++      $this->assertEqual((string) $elements[1], $explicit_file);
++      $this->assertEqual((string) $elements[2], $local_file);
++
+       // Verify the actual 'src' attribute of the logo being output.
+       $this->drupalGet('');
+       $elements = $this->xpath('//*[@id=:id]/img', array(':id' => 'logo'));
+
