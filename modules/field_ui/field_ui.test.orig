@@ -762,29 +762,3 @@ class FieldUIAlterTestCase extends DrupalWebTestCase {
     $this->assertText('Widget type: options_select', 'Widget type is not altered for pages in hook_field_widget_form_alter().');
   }
 }
-
-/**
- * Tests for field list report.
- */
-class FieldUIFieldListReport extends FieldUITestCase {
-  public static function getInfo() {
-    return array(
-      'name' => 'Field list report',
-      'description' => 'Tests for field list report.',
-      'group' => 'Field UI',
-    );
-  }
-
-  public function setUp() {
-    parent::setUp(array('forum'));
-  }
-
-  /**
-   * Test viewing field list report after disabling a module.
-   */
-  public function testBundlesDisable() {
-    module_disable(array('forum'));
-    drupal_flush_all_caches();
-    $this->drupalGet('admin/reports/fields');
-  }
-}

@@ -1,0 +1,63 @@
+From 417663bb99fe99375367f55e9b941620cd4b9d54 Mon Sep 17 00:00:00 2001
+From: Mircea Fernea <mircea.fernea@gmail.com>
+Date: Tue, 19 Mar 2013 15:56:46 +0200
+Subject: [PATCH] Issue #1351506: Check for disabled bundles when displaying
+ fields list report.
+
+---
+ modules/field_ui/field_ui.admin.inc |  5 +++++
+ modules/field_ui/field_ui.test      | 26 ++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+
+diff --git a/modules/field_ui/field_ui.admin.inc b/modules/field_ui/field_ui.admin.inc
+index 43bb202..7b5e538 100644
+--- a/modules/field_ui/field_ui.admin.inc
++++ b/modules/field_ui/field_ui.admin.inc
+@@ -19,6 +19,11 @@ function field_ui_fields_list() {
+   $rows = array();
+   foreach ($instances as $entity_type => $type_bundles) {
+     foreach ($type_bundles as $bundle => $bundle_instances) {
++      // Some fields might belong to bundles that are disabled (which are not
++      // returned by field_info_bundles()).
++      if (!isset($bundles[$entity_type][$bundle])) {
++        continue;
++      }
+       foreach ($bundle_instances as $field_name => $instance) {
+         $field = field_info_field($field_name);
+ 
+diff --git a/modules/field_ui/field_ui.test b/modules/field_ui/field_ui.test
+index b67b70e..43b7945 100644
+--- a/modules/field_ui/field_ui.test
++++ b/modules/field_ui/field_ui.test
+@@ -749,3 +749,29 @@ class FieldUIAlterTestCase extends DrupalWebTestCase {
+     $this->assertText('Widget type: options_select', 'Widget type is not altered for pages in hook_field_widget_form_alter().');
+   }
+ }
++
++/**
++ * Tests for field list report.
++ */
++class FieldUIFieldListReport extends FieldUITestCase {
++  public static function getInfo() {
++    return array(
++      'name' => 'Field list report',
++      'description' => 'Tests for field list report.',
++      'group' => 'Field UI',
++    );
++  }
++
++  public function setUp() {
++    parent::setUp(array('forum'));
++  }
++
++  /**
++   * Test viewing field list report after disabling a module.
++   */
++  public function testBundlesDisable() {
++    module_disable(array('forum'));
++    drupal_flush_all_caches();
++    $this->drupalGet('admin/reports/fields');
++  }
++}
+-- 
+1.8.1.msysgit.1
