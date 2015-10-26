@@ -53,3 +53,25 @@
  * @see conf_path()
  * @see http://drupal.org/documentation/install/multi-site
  */
+
+/* LOCAL */
+$sites['127.0.0.1']          = 'nci-nctn';
+$sites['nci-nctn.local']     = 'nci-nctn'; /* Set in local hosts */
+
+/* AWS CI/QA */
+$sites['174.129.249.95']     = 'nci-nctn';
+$sites['nci-nctn.qa']        = 'nci-nctn'; /* Set in local hosts */
+
+/* AWS UAT */
+$sites['50.17.223.185']      = 'nci-nctn';
+$sites['nci-nctn.uat']       = 'nci-nctn'; /* Set in local hosts */
+
+/* NCI STAGE */
+$sites['10.133.202.147']     = 'nci-nctn';
+$sites['nci-nctn.stage']     = 'nci-nctn'; /* Set in local hosts */
+$sites['nctn-data-archive-stage.nci.nih.gov'] = 'nci-nctn';
+
+/* NCI PROD 
+$sites['IP.GOES.HERE']       = 'nci-nctn';*/
+$sites['nci-nctn.prod']      = 'nci-nctn'; /* Set in local hosts */
+$sites['nctn-data-archive.nci.nih.gov'] = 'nci-nctn';

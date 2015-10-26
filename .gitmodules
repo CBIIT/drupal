@@ -1,0 +1,3 @@
+[submodule "sites/nci-nctn"]
+	path = sites/nci-nctn
+	url = git@github.com:CBIIT/nctn-data-sharing.git
