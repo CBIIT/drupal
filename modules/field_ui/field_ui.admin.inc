@@ -19,6 +19,11 @@ function field_ui_fields_list() {
   $rows = array();
   foreach ($instances as $entity_type => $type_bundles) {
     foreach ($type_bundles as $bundle => $bundle_instances) {
+      // Some fields might belong to bundles that are disabled (which are not
+      // returned by field_info_bundles()).
+      if (!isset($bundles[$entity_type][$bundle])) {
+        continue;
+      }
       foreach ($bundle_instances as $field_name => $instance) {
         $field = field_info_field($field_name);
 
