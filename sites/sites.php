@@ -56,10 +56,12 @@
 
 /* LOCAL */
 $sites['127.0.0.1']          = 'nci-nctn';
+$sites['nci-itcr.local']     = 'nci-itcr'; /* Set in local hosts */
 $sites['nci-nctn.local']     = 'nci-nctn'; /* Set in local hosts */
 
 /* AWS CI/QA */
 $sites['174.129.249.95']     = 'nci-nctn';
+$sites['nci-itcr.qa']        = 'nci-itcr'; /* Set in local hosts */
 $sites['nci-nctn.qa']        = 'nci-nctn'; /* Set in local hosts */
 
 /* AWS UAT */
