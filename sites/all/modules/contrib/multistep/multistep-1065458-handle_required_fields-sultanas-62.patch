@@ -1,0 +1,189 @@
+diff --git a/multistep.install b/multistep.install
+index f826596..9d4e01c 100644
+--- a/multistep.install
++++ b/multistep.install
+@@ -12,7 +12,7 @@ function multistep_install() {
+   // Set multistep to a higher weight so that it allows extra fields to load first.
+   db_update('system')
+     ->fields(array(
+-      'weight' => 10,
++      'weight' => 50,
+     ))
+     ->condition('name', 'multistep')
+     ->execute();
+@@ -176,3 +176,15 @@ function multistep_update_7101(&$sandbox) {
+   db_drop_index('multistep', 'multistep_nid_step');
+   db_change_field('multistep', 'step', 'step', $spec, $keys_new);
+ }
++
++/**
++ * Increase module weight to account for modules with a higher weight.
++ */
++function multistep_update_7102() {
++  db_update('system')
++    ->fields(array(
++      'weight' => 50,
++    ))
++    ->condition('name', 'multistep')
++    ->execute();
++}
+diff --git a/multistep.module b/multistep.module
+index cdd72f2..dcf69b8 100644
+--- a/multistep.module
++++ b/multistep.module
+@@ -159,17 +159,25 @@ function multistep_block_view($type = '') {
+   if (!is_multistep($type)) return;
+ 
+   $router_item = menu_get_item();
+-  $page_callback = $router_item['page_callback']; 
+-  
++  $page_callback = $router_item['page_callback'];
++
+   if ($page_callback == 'node_page_edit') {
+     $node = menu_get_object();
+-    if ($node->type != $type) return;
++    if ($node->type != $type) {
++      return;
++    }
+     $nid = $node->nid;
+-  } elseif($page_callback == 'node_add') {
+-    if ($router_item['page_arguments'][0] != $type) return;
++  }
++  elseif ($page_callback == 'node_add') {
++    if ($router_item['page_arguments'][0] != $type) {
++      return;
++    }
+     $nid = 0;
+-  } else return;
+-  
++  }
++  else {
++    return;
++  }
++
+   $content = array();
+   // Display block body.
+   if (variable_get('multistep_body_' . $type, '') != '') {
+@@ -386,6 +394,92 @@ function multistep_field_attach_form($entity_type, $entity, &$form, &$form_state
+ }
+ 
+ /**
++ * Recursively gathers current form childrens.
++ *
++ * @param array $element
++ *   The form element to search for childrens which are not excluded.
++ * @param array $excluded_children
++ *   An array of excluded children.
++ *
++ * @return array
++ *   Array of form children names.
++ */
++function _multistep_gather_current_children($element, $excluded_children) {
++  $current_children = array();
++  foreach (element_children($element) as $key) {
++    // If the element has #tree set to TRUE or has no children, add it to the
++    // current children. Otherwise, fetch the children of that element.
++    $children = count(element_children($element[$key])) > 0 && (!isset($element[$key]['#type']) || !in_array($element[$key]['#type'], array('radios', 'checkboxes')));
++    if (!empty($element[$key]['#tree']) || !$children) {
++      if (!isset($excluded_children[$key])) {
++        $current_children[] = array($key);
++      }
++    }
++    else {
++      $current_children = array_merge($current_children, _multistep_gather_current_children($element[$key], $excluded_children));
++    }
++  }
++  return $current_children;
++}
++
++/**
++ * Implements hook_form_alter().
++ */
++function multistep_form_alter(&$form, &$form_state) {
++  // Check if this is a multistep enabled form.
++  if (isset($form['#multistep'])) {
++    $excluded_children = _multistep_gather_excluded_fieldgroup_children($form, $form['#multistep']['current']);
++    $current_children = _multistep_gather_current_children($form, $excluded_children);
++
++    // Apply limit validations to all submit fields.
++    foreach (element_children($form['actions']) as $key) {
++      if (isset($form['actions'][$key]['#type']) && $form['actions'][$key]['#type'] == 'submit') {
++        $form['actions'][$key]['#limit_validation_errors'] = $current_children;
++      }
++    }
++  }
++}
++
++/**
++ * Recursively gets all childrens of fieldgroups which are not from the current step.
++ */
++function _multistep_gather_excluded_fieldgroup_children($form, $exclude_group) {
++  $form_elements = array();
++  foreach ($form['#groups'] as $group) {
++    if ($group->format_type == 'multistep' && $group->group_name != $exclude_group) {
++      foreach ($group->children as $child) {
++        if (in_array($child, array_keys($form['#groups']))) {
++          $form_elements = array_merge($form_elements, _multistep_gather_child_fieldgroup_children($form, $child));
++        }
++        else {
++          $form_elements[$child] = $child;
++        }
++      }
++    }
++  }
++  return $form_elements;
++}
++
++ /**
++  * Recursively get all form elements of a given group.
++  */
++function _multistep_gather_child_fieldgroup_children($form, $group) {
++  $form_elements = array();
++  if (isset($form['#groups'][$group]->children) && is_array($form['#groups'][$group]->children)) {
++    $children = $form['#groups'][$group]->children;
++    foreach ($children as $child) {
++      if (in_array($child, array_keys($form['#groups']))) {
++        $form_elements = array_merge($form_elements, _multistep_gather_fieldgroup_children($form, $child));
++      }
++      else {
++        $form_elements[$child] = $child;
++      }
++    }
++  }
++  return $form_elements;
++}
++
++/**
+  * Implements hook_node_validate().
+  * Set proper revisioning and publishing.
+  */
+@@ -807,3 +901,29 @@ function multistep_views_api() {
+     'api' => 2,
+   );
+ }
++
++
++/**
++ * recursively get all form elements of a given group
++ */
++function _multistep_gather_fieldgroup_children($form, $group) {
++  $children = $form['#groups'][$group]->children;
++  foreach ($children as $child) {
++    if (in_array($child, array_keys($form['#groups']))) {
++      $form_elements = array_merge($form_elements, _multistep_gather_fieldgroup_children($form, $child));
++    }
++    else {
++      $form_elements[] = array($child);
++    }
++  }
++  return $form_elements;
++}
++
++/**
++ * Implements hook_node_presave().
++ */
++function multistep_node_presave($node) {
++  if (empty($node->path['alias'])) {
++    $node->path['alias'] = '';
++  }
++}

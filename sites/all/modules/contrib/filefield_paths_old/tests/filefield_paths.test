@@ -1,0 +1,157 @@
+<?php
+
+/**
+ * @file
+ * Tests for the File (Field_) Paths module.
+ */
+
+/**
+ * Class FileFieldPathsTestCase
+ */
+class FileFieldPathsTestCase extends FileFieldTestCase {
+  var $content_type = NULL;
+
+  /**
+   * @inheritdoc
+   */
+  function setUp() {
+    // Setup required modules.
+    parent::setUp('filefield_paths');
+
+    // Create a content type.
+    $content_type       = $this->drupalCreateContentType();
+    $this->content_type = $content_type->name;
+  }
+}
+
+/**
+ * Class FileFieldPathsGeneralTestCase
+ */
+class FileFieldPathsGeneralTestCase extends FileFieldPathsTestCase {
+  /**
+   * @inheritdoc
+   */
+  public static function getInfo() {
+    return array(
+      'name'        => 'General functionality',
+      'description' => 'Test general functionality.',
+      'group'       => 'File (Field) Paths',
+    );
+  }
+
+  /**
+   * Test that the File (Field) Paths UI works as expected.
+   */
+  public function testAddField() {
+    // Create a File field.
+    $field_name = strtolower($this->randomName());
+    $this->createFileField($field_name, $this->content_type);
+
+    // Ensure File (Field) Paths settings are present.
+    $this->drupalGet("admin/structure/types/manage/{$this->content_type}/fields/{$field_name}");
+    $this->assertText('Enable File (Field) Paths?', t('File (Field) Path settings are present.'));
+  }
+
+  /**
+   * Test a basic file upload with File (Field) Paths.
+   */
+  public function testUploadFile() {
+    // Create a File field with 'node/[node:nid]' as the File path and
+    // '[node:nid].txt' as the File name,
+    $field_name                                                 = strtolower($this->randomName());
+    $instance_settings['filefield_paths']['file_path']['value'] = 'node/[node:nid]';
+    $instance_settings['filefield_paths']['file_name']['value'] = '[node:nid].txt';
+    $this->createFileField($field_name, $this->content_type, array(), $instance_settings);
+
+    // Create a node with a test file.
+    $test_file = $this->getTestFile('text');
+    $nid       = $this->uploadNodeFile($test_file, $field_name, $this->content_type);
+
+    // Ensure that the File path has been processed correctly.
+    $this->assertRaw("/node/{$nid}/{$nid}", t('The File path has been processed correctly.'));
+  }
+}
+
+/**
+ * Class FileFieldPathsTextReplaceTestCase
+ */
+class FileFieldPathsTextReplaceTestCase extends FileFieldPathsTestCase {
+  /**
+   * @inheritdoc
+   */
+  public static function getInfo() {
+    return array(
+      'name'        => 'Text replace functionality',
+      'description' => 'Tests text replace functionality.',
+      'group'       => 'File (Field) Paths',
+    );
+  }
+
+  /**
+   * Test text replace with a basic file upload.
+   */
+  public function testUploadFile() {
+    $langcode = LANGUAGE_NONE;
+
+    // Create a File field with 'node/[node:nid]' as the File path and
+    // '[node:nid].txt' as the File name,
+    $field_name                                                 = strtolower($this->randomName());
+    $instance_settings['filefield_paths']['file_path']['value'] = 'node/[node:nid]';
+    $instance_settings['filefield_paths']['file_name']['value'] = '[node:nid].txt';
+    $this->createFileField($field_name, $this->content_type, array(), $instance_settings);
+
+    // Upload a file and reference the original path to the file in the body
+    // field.
+    $test_file            = $this->getTestFile('text');
+    $original_destination = file_destination($test_file->uri, FILE_EXISTS_RENAME);
+    $edit                 = array(
+      'title'                              => $this->randomName(),
+      "body[{$langcode}][0][value]"        => $original_destination,
+      "files[{$field_name}_{$langcode}_0]" => drupal_realpath($test_file->uri),
+    );
+    $this->drupalPost("node/add/{$this->content_type}", $edit, t('Save'));
+
+    // Get created Node ID.
+    $matches = array();
+    preg_match('/node\/([0-9]+)/', $this->getUrl(), $matches);
+    $nid = $matches[1];
+
+    // Ensure body field has updated file path.
+    $node = node_load($nid);
+    $this->assert(strpos($node->body[$langcode][0]['value'], "node/{$nid}") !== FALSE, t('File path replaced correctly in text field.'));
+  }
+}
+
+/**
+ * Class FileFieldPathsUpdatesCase
+ */
+class FileFieldPathsUpdatesCase extends FileFieldPathsTestCase {
+  /**
+   * @inheritdoc
+   */
+  public static function getInfo() {
+    return array(
+      'name'        => 'Update functionality',
+      'description' => 'Tests retroactive and active updates functionality.',
+      'group'       => 'File (Field) Paths',
+    );
+  }
+
+  /**
+   * Test behaviour of Retroactive updates when no updates are needed.
+   */
+  public function testRetroEmpty() {
+    // Create a File field.
+    $field_name = strtolower($this->randomName());
+    $this->createFileField($field_name, $this->content_type);
+
+    // Trigger retroactive updates.
+    $edit = array(
+      'instance[settings][filefield_paths][retroactive_update]' => TRUE
+    );
+    $this->drupalPost("admin/structure/types/manage/{$this->content_type}/fields/{$field_name}", $edit, t('Save settings'));
+
+    // Ensure no errors are thrown.
+    $this->assertNoText('Error', t('No errors were found.'));
+  }
+}

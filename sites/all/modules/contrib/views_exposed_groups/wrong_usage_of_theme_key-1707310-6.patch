@@ -1,0 +1,13 @@
+diff --git a/views/views_exposed_groups_plugin.inc b/views/views_exposed_groups_plugin.inc
+index 740198b..ba4aca8 100644
+--- a/views/views_exposed_groups_plugin.inc
++++ b/views/views_exposed_groups_plugin.inc
+@@ -77,7 +77,7 @@ class views_exposed_groups_plugin extends views_plugin_exposed_form_basic {
+     if($this->options['submit_button']) {
+       $form['submit']['#value'] = $this->options['submit_button'];
+     }
+-    $form['#theme'] = array();
++    $form['#theme'] = '';
+     if($this->options['views_exposed_groups']['format_groups'] == 'vertical_tabs') {
+   	  $form['filters'] = array(
+   	      '#type' => 'vertical_tabs',

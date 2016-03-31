@@ -1,0 +1,38 @@
+***************
+*** 12,18 ****
+    // Set multistep to a higher weight so that it allows extra fields to load first.
+    db_update('system')
+      ->fields(array(
+-       'weight' => 10,
+      ))
+      ->condition('name', 'multistep')
+      ->execute();
+--- 12,18 ----
+    // Set multistep to a higher weight so that it allows extra fields to load first.
+    db_update('system')
+      ->fields(array(
++       'weight' => 50,
+      ))
+      ->condition('name', 'multistep')
+      ->execute();
+***************
+*** 176,178 ****
+    db_drop_index('multistep', 'multistep_nid_step');
+    db_change_field('multistep', 'step', 'step', $spec, $keys_new);
+  }
+--- 176,190 ----
+    db_drop_index('multistep', 'multistep_nid_step');
+    db_change_field('multistep', 'step', 'step', $spec, $keys_new);
+  }
++ 
++ /**
++  * Increase module weight to account for modules with a higher weight.
++  */
++ function multistep_update_7102() {
++   db_update('system')
++     ->fields(array(
++       'weight' => 50,
++     ))
++     ->condition('name', 'multistep')
++     ->execute();
++ }
