@@ -42,6 +42,21 @@ function captcha_after_schema() {
  * Implementation of hook_install().
  */
 function captcha_after_install() {
+  $form_ids = array(
+    'comment_node_activity_code_form',
+    'comment_node_article_form',
+    'comment_node_funded_project_for',
+    'comment_node_page_form',
+    'user_login',
+    'user_login_block',
+    'user_pass',
+    'user_register_form'
+  );
+  $options = 'a:3:{s:16:"submit_threshold";s:0:"";s:18:"flooding_threshold";s:0:"";s:25:"global_flooding_threshold";s:0:"";}';
+  foreach ($form_ids as $form_id) {
+    db_query("INSERT INTO {captcha_points} (form_id, module, captcha_type) VALUES (:form_id, 'captcha', 'Math')", array(':form_id'=>$form_id));
+    db_query("INSERT INTO {captcha_after} (form_id, enable, options) VALUES (:form_id, 1, :opt)", array(':form_id'=>$form_id, ':opt'=>$options));
+  }
 }
 
 /**
