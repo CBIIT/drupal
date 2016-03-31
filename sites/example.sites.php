@@ -53,26 +53,3 @@
  * @see conf_path()
  * @see http://drupal.org/documentation/install/multi-site
  */
-
-/* LOCAL */
-$sites['nci-itcr.local']       = 'nci-itcr';
-$sites['nci-nctn.local']       = 'nci-nctn';
-
-/* AWS CI/QA */
-$sites['174.129.249.95']       = 'nci-nctn';
-$sites['nci-itcr.qa']          = 'nci-itcr';
-$sites['nci-nctn.qa']          = 'nci-nctn';
-
-/* AWS UAT */
-$sites['50.17.223.185']        = 'nci-nctn';
-$sites['nci-itcr.uat']         = 'nci-itcr';
-$sites['nci-nctn.uat']         = 'nci-nctn';
-
-/* NCI STAGE */
-$sites['10.133.202.147']       = 'nci-nctn';
-$sites['nci-itcr.stage']       = 'nci-itcr';
-$sites['nci-nctn.stage']       = 'nci-nctn';
-$sites['itcr-dev.nci.nih.gov'] = 'nci-itcr';
-$sites['nctn-dev.nci.nih.gov'] = 'nci-nctn';
-
-
