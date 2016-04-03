@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.features.taxonomy.inc
+ * features_baseline_setup.features.taxonomy.inc
  */
 
 /**
  * Implements hook_taxonomy_default_vocabularies().
  */
-function features_16033018_baseline_setup_taxonomy_default_vocabularies() {
+function features_baseline_setup_taxonomy_default_vocabularies() {
   return array(
     'tags' => array(
       'name' => 'Tags',

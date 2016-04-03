@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.features.filter.inc
+ * features_baseline_setup.features.filter.inc
  */
 
 /**
  * Implements hook_filter_default_formats().
  */
-function features_16033018_baseline_setup_filter_default_formats() {
+function features_baseline_setup_filter_default_formats() {
   $formats = array();
 
   // Exported format: Filtered HTML.

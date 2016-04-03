@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.field_group.inc
+ * features_baseline_setup.field_group.inc
  */
 
 /**
  * Implements hook_field_group_info().
  */
-function features_16033018_baseline_setup_field_group_info() {
+function features_baseline_setup_field_group_info() {
   $field_groups = array();
 
   $field_group = new stdClass();

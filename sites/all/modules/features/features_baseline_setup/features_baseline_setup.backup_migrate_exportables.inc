@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.backup_migrate_exportables.inc
+ * features_baseline_setup.backup_migrate_exportables.inc
  */
 
 /**
  * Implements hook_exportables_backup_migrate_profiles().
  */
-function features_16033018_baseline_setup_exportables_backup_migrate_profiles() {
+function features_baseline_setup_exportables_backup_migrate_profiles() {
   $export = array();
 
   $item = new stdClass();

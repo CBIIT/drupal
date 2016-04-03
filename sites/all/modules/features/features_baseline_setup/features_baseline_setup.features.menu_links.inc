@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.features.menu_links.inc
+ * features_baseline_setup.features.menu_links.inc
  */
 
 /**
  * Implements hook_menu_default_menu_links().
  */
-function features_16033018_baseline_setup_menu_default_menu_links() {
+function features_baseline_setup_menu_default_menu_links() {
   $menu_links = array();
 
   // Exported menu link: menu-menu-footer_accessibility:http://www.cancer.gov/policies/accessibility.

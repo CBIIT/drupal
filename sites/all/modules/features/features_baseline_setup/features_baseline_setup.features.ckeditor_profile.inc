@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.features.ckeditor_profile.inc
+ * features_baseline_setup.features.ckeditor_profile.inc
  */
 
 /**
  * Implements hook_ckeditor_profile_defaults().
  */
-function features_16033018_baseline_setup_ckeditor_profile_defaults() {
+function features_baseline_setup_ckeditor_profile_defaults() {
   $data = array(
     'Advanced' => array(
       'name' => 'Advanced',

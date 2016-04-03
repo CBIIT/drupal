@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.strongarm.inc
+ * features_baseline_setup.strongarm.inc
  */
 
 /**
  * Implements hook_strongarm().
  */
-function features_16033018_baseline_setup_strongarm() {
+function features_baseline_setup_strongarm() {
   $export = array();
 
   $strongarm = new stdClass();
@@ -406,8 +406,22 @@ user/*/password';
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'cron_key';
+  $strongarm->value = 'Vh0NDcsbHkYbB6s3Llm7XF3ixdvO7Xx7zhkCY4isGMk';
+  $export['cron_key'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'cron_last';
+  $strongarm->value = 1459702373;
+  $export['cron_last'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'ctools_last_cron';
-  $strongarm->value = 1459454137;
+  $strongarm->value = 1459641403;
   $export['ctools_last_cron'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -465,6 +479,13 @@ user/*/password';
   $strongarm->name = 'date_views_week_format_with_year';
   $strongarm->value = 'F j, Y';
   $export['date_views_week_format_with_year'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'dblog_row_limit';
+  $strongarm->value = '1000';
+  $export['dblog_row_limit'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -551,9 +572,9 @@ user/*/password';
   $strongarm->api_version = 1;
   $strongarm->name = 'emaillog_last_message';
   $strongarm->value = array(
-    'message' => 'filterMissing text format: %format.',
-    'time' => 1459240036,
-    'count' => 9,
+    'message' => 'php%type: !message in %function (line %line of %file).',
+    'time' => 1459659009,
+    'count' => 2,
   );
   $export['emaillog_last_message'] = $strongarm;
 
@@ -746,6 +767,13 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'error_level';
+  $strongarm->value = '0';
+  $export['error_level'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'extlink_508_fix';
   $strongarm->value = 1;
   $export['extlink_508_fix'] = $strongarm;
@@ -777,15 +805,7 @@ within 24 hours.
 
 <p>Thank you for visiting our site. We hope your visit was informative and enjoyable.</p>
 
-<p>
-<div class="extlink-extra-actions">
-      <div class="extlink-extra-back-action"><a title="Cancel" href="[extlink:back-url]">Cancel</a>
-      </div>
-      <div class="extlink-extra-go-action"><a class="ext-override" title="Go to link" 
-      href="[extlink:external-url]">Go to link</a>
-      </div>
-</div>
-</p>',
+<p><a title="Cancel" href="[extlink:back-url]">Cancel</a> &nbsp;|&nbsp; <a class="ext-override" title="Go to link" href="[extlink:external-url]">Go to link</a></p>',
     'format' => 'full_html',
   );
   $export['extlink_alert_text'] = $strongarm;
@@ -836,14 +856,14 @@ within 24 hours.
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'extlink_exclude';
-  $strongarm->value = '(nci.nih.gov)';
+  $strongarm->value = '(nci.nih.gov)|(cancer.gov)';
   $export['extlink_exclude'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'extlink_exclude_warning';
-  $strongarm->value = '(nih.gov)|(cancer.gov)|(hhs.gov)|(usa.gov)';
+  $strongarm->value = '(nci.nih.gov)|(cancer.gov)';
   $export['extlink_exclude_warning'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -1369,7 +1389,7 @@ within 24 hours.
     'module_filter' => 1459118447,
     'comment' => 1459118669,
     'custom_add_another' => 1459405216,
-    'csm' => 1459120490,
+    'csm' => 1459706476,
     'date' => 1459408174,
     'date_views' => 1459408174,
     'email_confirm' => 1459409040,
@@ -1388,46 +1408,46 @@ within 24 hours.
     'spamspan' => 1459121179,
     'field_collection' => 1459122725,
     'field_group' => 1459122725,
-    'errorlog' => 1459233204,
+    'errorlog' => 1459706501,
     'views_ui' => 1459409131,
     'user_stats' => 1459237182,
-    'remove_generator' => 1459233805,
-    'user_reference' => 1459233848,
+    'remove_generator' => 1459706789,
+    'user_reference' => 1459707041,
     'userprotect' => 1459233848,
     'user_create_by_role' => 1459405683,
     'taxonomy' => 1459234141,
-    'syslog' => 1459234183,
+    'syslog' => 1459706936,
     'strongarm' => 1459234183,
     'shortcut' => 1459234275,
     'simplify' => 1459234275,
     'session_limit' => 1459235045,
-    'session_cookie_lifetime' => 1459235065,
-    'securelogin' => 1459235103,
+    'session_cookie_lifetime' => 1459706821,
+    'securelogin' => 1459706593,
     'rss_permissions' => 1459235199,
     'path' => 1459235258,
     'references_dialog' => 1459402760,
     'password_policy' => 1459235340,
-    'paranoia' => 1459235746,
+    'paranoia' => 1459708298,
     'node_reference' => 1459400048,
-    'node_edit_protection' => 1459235791,
+    'node_edit_protection' => 1459706750,
     'maxlength' => 1459236040,
     'maillog' => 1459236040,
-    'masked_input' => 1459236040,
+    'masked_input' => 1459706658,
     'masquerade' => 1459236040,
     'list' => 1459236141,
-    'login_security' => 1459236141,
+    'login_security' => 1459706581,
     'legal' => 1459236770,
     'label_help' => 1459405319,
     'image' => 1459236820,
-    'jquery_update' => 1459236820,
+    'jquery_update' => 1459706476,
     'help' => 1459236978,
     'file_entity' => 1459237008,
     'field_ui' => 1459237032,
     'field_permissions' => 1459237043,
-    'tracker' => 1459238107,
+    'tracker' => 1459707007,
     'features' => 1459359813,
     'auto_nodetitle' => 1459388267,
-    'features_16033018_baseline_setup' => 1459407944,
+    'features_16033018_baseline_setup' => 1459659281,
     'overlay' => 1459408043,
     'migrate' => 1459399009,
     'migrate_ui' => 1459399004,
@@ -1437,14 +1457,14 @@ within 24 hours.
     'node_export_features_ui' => 1459400048,
     'uuid' => 1459400006,
     'uuid_path' => 1459400006,
-    'features_16033023_activity_code' => 1459407921,
+    'features_16033023_activity_code' => 1459642099,
     'dashboard' => 1459407963,
     'locale' => 1459408022,
     'rdf' => 1459408057,
     'search' => 1459408069,
     'date_api' => 1459408174,
     'views_content' => 1459409131,
-    'views_bulk_operations' => 1459409131,
+    'views_bulk_operations' => 1459707475,
     'views_conditional' => 1459409131,
     'views_contextual_filters_or' => 1459409131,
     'views_exposed_groups' => 1459409131,
@@ -1453,6 +1473,16 @@ within 24 hours.
     'views_show_query' => 1459409131,
     'views_table_rowspan' => 1459409131,
     'link' => 1459414009,
+    'features_informatics_tool' => 1459647514,
+    'features_16033104_funded_project' => 1459642099,
+    'features_activity_code' => 1459647490,
+    'features_funded_opportunity' => 1459647490,
+    'features_funded_project' => 1459647490,
+    'actions_permissions' => 1459707320,
+    'conditional_fields' => 1459707116,
+    'flood_unblock' => 1459707160,
+    'multistep' => 1459707172,
+    'static_field' => 1459707204,
   );
   $export['module_filter_recent_modules'] = $strongarm;
 
@@ -1515,6 +1545,20 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'node_admin_theme';
+  $strongarm->value = '1';
+  $export['node_admin_theme'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_cron_last';
+  $strongarm->value = '1459647490';
+  $export['node_cron_last'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_export_reset_changed_article';
   $strongarm->value = 0;
   $export['node_export_reset_changed_article'] = $strongarm;
@@ -1560,7 +1604,9 @@ within 24 hours.
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'path_alias_whitelist';
-  $strongarm->value = array();
+  $strongarm->value = array(
+    'taxonomy' => TRUE,
+  );
   $export['path_alias_whitelist'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -1804,6 +1850,27 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'syslog_facility';
+  $strongarm->value = '128';
+  $export['syslog_facility'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'syslog_format';
+  $strongarm->value = '!base_url|!timestamp|!type|!ip|!request_uri|!referer|!uid|!link|!message';
+  $export['syslog_format'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'syslog_identity';
+  $strongarm->value = 'drupal';
+  $export['syslog_identity'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'tfa_basic_cookie_domain';
   $strongarm->value = '.nci-itcr.local';
   $export['tfa_basic_cookie_domain'] = $strongarm;
@@ -1870,6 +1937,20 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'tracker_index_nid';
+  $strongarm->value = 23;
+  $export['tracker_index_nid'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'update_last_check';
+  $strongarm->value = 1459702376;
+  $export['update_last_check'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'update_last_email_notification';
   $strongarm->value = 1459439225;
   $export['update_last_email_notification'] = $strongarm;
@@ -1930,6 +2011,13 @@ within 24 hours.
     ),
   );
   $export['userprotect_role_protections'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'user_admin_role';
+  $strongarm->value = '3';
+  $export['user_admin_role'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

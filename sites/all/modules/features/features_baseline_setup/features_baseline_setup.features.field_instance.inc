@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.features.field_instance.inc
+ * features_baseline_setup.features.field_instance.inc
  */
 
 /**
  * Implements hook_field_default_field_instances().
  */
-function features_16033018_baseline_setup_field_default_field_instances() {
+function features_baseline_setup_field_default_field_instances() {
   $field_instances = array();
 
   // Exported field_instance: 'comment-comment_node_article-comment_body'.

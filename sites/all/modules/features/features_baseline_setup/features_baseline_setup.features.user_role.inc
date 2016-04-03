@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.features.user_role.inc
+ * features_baseline_setup.features.user_role.inc
  */
 
 /**
  * Implements hook_user_default_roles().
  */
-function features_16033018_baseline_setup_user_default_roles() {
+function features_baseline_setup_user_default_roles() {
   $roles = array();
 
   // Exported role: Administrator.

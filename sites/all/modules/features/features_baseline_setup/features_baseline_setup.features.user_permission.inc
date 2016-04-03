@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.features.user_permission.inc
+ * features_baseline_setup.features.user_permission.inc
  */
 
 /**
  * Implements hook_user_default_permissions().
  */
-function features_16033018_baseline_setup_user_default_permissions() {
+function features_baseline_setup_user_default_permissions() {
   $permissions = array();
 
   // Exported permission: 'View IP addresses'.
@@ -114,6 +114,16 @@ function features_16033018_baseline_setup_user_default_permissions() {
     'module' => 'dashboard',
   );
 
+  // Exported permission: 'access flood unblock'.
+  $permissions['access flood unblock'] = array(
+    'name' => 'access flood unblock',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+      'Manager' => 'Manager',
+    ),
+    'module' => 'flood_unblock',
+  );
+
   // Exported permission: 'access private fields'.
   $permissions['access private fields'] = array(
     'name' => 'access private fields',
@@ -135,6 +145,7 @@ function features_16033018_baseline_setup_user_default_permissions() {
     'name' => 'access site in maintenance mode',
     'roles' => array(
       'Administrator' => 'Administrator',
+      'Manager' => 'Manager',
     ),
     'module' => 'system',
   );
@@ -266,6 +277,15 @@ function features_16033018_baseline_setup_user_default_permissions() {
     'module' => 'node',
   );
 
+  // Exported permission: 'administer dependencies'.
+  $permissions['administer dependencies'] = array(
+    'name' => 'administer dependencies',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'conditional_fields',
+  );
+
   // Exported permission: 'administer features'.
   $permissions['administer features'] = array(
     'name' => 'administer features',
@@ -339,6 +359,15 @@ function features_16033018_baseline_setup_user_default_permissions() {
     'module' => 'image',
   );
 
+  // Exported permission: 'administer languages'.
+  $permissions['administer languages'] = array(
+    'name' => 'administer languages',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'locale',
+  );
+
   // Exported permission: 'administer maillog'.
   $permissions['administer maillog'] = array(
     'name' => 'administer maillog',
@@ -366,6 +395,15 @@ function features_16033018_baseline_setup_user_default_permissions() {
     'module' => 'menu',
   );
 
+  // Exported permission: 'administer messages alter settings'.
+  $permissions['administer messages alter settings'] = array(
+    'name' => 'administer messages alter settings',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'messages_alter',
+  );
+
   // Exported permission: 'administer module filter'.
   $permissions['administer module filter'] = array(
     'name' => 'administer module filter',
@@ -382,6 +420,15 @@ function features_16033018_baseline_setup_user_default_permissions() {
       'Administrator' => 'Administrator',
     ),
     'module' => 'system',
+  );
+
+  // Exported permission: 'administer multistep'.
+  $permissions['administer multistep'] = array(
+    'name' => 'administer multistep',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'multistep',
   );
 
   // Exported permission: 'administer nodes'.
@@ -410,6 +457,15 @@ function features_16033018_baseline_setup_user_default_permissions() {
       'Administrator' => 'Administrator',
     ),
     'module' => 'user',
+  );
+
+  // Exported permission: 'administer search'.
+  $permissions['administer search'] = array(
+    'name' => 'administer search',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'search',
   );
 
   // Exported permission: 'administer session limits by role'.
@@ -588,6 +644,24 @@ function features_16033018_baseline_setup_user_default_permissions() {
     'module' => 'user',
   );
 
+  // Exported permission: 'change article creation page title'.
+  $permissions['change article creation page title'] = array(
+    'name' => 'change article creation page title',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'csm',
+  );
+
+  // Exported permission: 'change article submit messages'.
+  $permissions['change article submit messages'] = array(
+    'name' => 'change article submit messages',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'csm',
+  );
+
   // Exported permission: 'change own e-mail'.
   $permissions['change own e-mail'] = array(
     'name' => 'change own e-mail',
@@ -636,6 +710,24 @@ function features_16033018_baseline_setup_user_default_permissions() {
       'Manager' => 'Manager',
     ),
     'module' => 'user',
+  );
+
+  // Exported permission: 'change page creation page title'.
+  $permissions['change page creation page title'] = array(
+    'name' => 'change page creation page title',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'csm',
+  );
+
+  // Exported permission: 'change page submit messages'.
+  $permissions['change page submit messages'] = array(
+    'name' => 'change page submit messages',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'csm',
   );
 
   // Exported permission: 'create article content'.
@@ -847,7 +939,10 @@ function features_16033018_baseline_setup_user_default_permissions() {
   // Exported permission: 'delete terms in tags'.
   $permissions['delete terms in tags'] = array(
     'name' => 'delete terms in tags',
-    'roles' => array(),
+    'roles' => array(
+      'Administrator' => 'Administrator',
+      'Manager' => 'Manager',
+    ),
     'module' => 'taxonomy',
   );
 
@@ -1075,7 +1170,10 @@ function features_16033018_baseline_setup_user_default_permissions() {
   // Exported permission: 'edit terms in tags'.
   $permissions['edit terms in tags'] = array(
     'name' => 'edit terms in tags',
-    'roles' => array(),
+    'roles' => array(
+      'Administrator' => 'Administrator',
+      'Manager' => 'Manager',
+    ),
     'module' => 'taxonomy',
   );
 
@@ -1200,6 +1298,18 @@ function features_16033018_baseline_setup_user_default_permissions() {
     'module' => 'node',
   );
 
+  // Exported permission: 'search content'.
+  $permissions['search content'] = array(
+    'name' => 'search content',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+      'Manager' => 'Manager',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'search',
+  );
+
   // Exported permission: 'select account cancellation method'.
   $permissions['select account cancellation method'] = array(
     'name' => 'select account cancellation method',
@@ -1246,6 +1356,26 @@ function features_16033018_baseline_setup_user_default_permissions() {
     'module' => 'shortcut',
   );
 
+  // Exported permission: 'toggle multistep'.
+  $permissions['toggle multistep'] = array(
+    'name' => 'toggle multistep',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+      'Manager' => 'Manager',
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'multistep',
+  );
+
+  // Exported permission: 'translate interface'.
+  $permissions['translate interface'] = array(
+    'name' => 'translate interface',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'locale',
+  );
+
   // Exported permission: 'unblock expired accounts'.
   $permissions['unblock expired accounts'] = array(
     'name' => 'unblock expired accounts',
@@ -1270,6 +1400,15 @@ function features_16033018_baseline_setup_user_default_permissions() {
       'Administrator' => 'Administrator',
     ),
     'module' => 'node_export',
+  );
+
+  // Exported permission: 'use advanced search'.
+  $permissions['use advanced search'] = array(
+    'name' => 'use advanced search',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'search',
   );
 
   // Exported permission: 'use ctools import'.

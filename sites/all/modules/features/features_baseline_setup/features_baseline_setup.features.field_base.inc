@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.features.field_base.inc
+ * features_baseline_setup.features.field_base.inc
  */
 
 /**
  * Implements hook_field_default_field_bases().
  */
-function features_16033018_baseline_setup_field_default_field_bases() {
+function features_baseline_setup_field_default_field_bases() {
   $field_bases = array();
 
   // Exported field_base: 'body'.

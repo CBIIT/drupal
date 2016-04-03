@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Features - Baseline Setup feature.
+ */
+
+include_once 'features_baseline_setup.features.inc';

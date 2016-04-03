@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * features_16033018_baseline_setup.features.menu_custom.inc
+ * features_baseline_setup.features.menu_custom.inc
  */
 
 /**
  * Implements hook_menu_default_menu_custom().
  */
-function features_16033018_baseline_setup_menu_default_menu_custom() {
+function features_baseline_setup_menu_default_menu_custom() {
   $menus = array();
 
   // Exported menu: menu-menu-footer.
