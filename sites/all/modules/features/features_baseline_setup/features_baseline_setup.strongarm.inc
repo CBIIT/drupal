@@ -399,6 +399,41 @@ user/*/password';
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'comment_anonymous_article';
+  $strongarm->value = 0;
+  $export['comment_anonymous_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_article';
+  $strongarm->value = '1';
+  $export['comment_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_mode_article';
+  $strongarm->value = 0;
+  $export['comment_default_mode_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_per_page_article';
+  $strongarm->value = '50';
+  $export['comment_default_per_page_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_form_location_article';
+  $strongarm->value = 0;
+  $export['comment_form_location_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_page';
   $strongarm->value = 0;
   $export['comment_page'] = $strongarm;
@@ -406,22 +441,36 @@ user/*/password';
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'comment_preview_article';
+  $strongarm->value = '0';
+  $export['comment_preview_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_subject_field_article';
+  $strongarm->value = 0;
+  $export['comment_subject_field_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'cron_key';
-  $strongarm->value = 'Vh0NDcsbHkYbB6s3Llm7XF3ixdvO7Xx7zhkCY4isGMk';
+  $strongarm->value = 'FERNBgeQ-whrgrszvGVPKHwUubvSm5irZfsz9VbqIiY';
   $export['cron_key'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'cron_last';
-  $strongarm->value = 1459702373;
+  $strongarm->value = 1459747104;
   $export['cron_last'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'ctools_last_cron';
-  $strongarm->value = 1459641403;
+  $strongarm->value = 1459728539;
   $export['ctools_last_cron'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -932,6 +981,23 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'field_bundle_settings_node__article';
+  $strongarm->value = array(
+    'view_modes' => array(),
+    'extra_fields' => array(
+      'form' => array(
+        'title' => array(
+          'weight' => '0',
+        ),
+      ),
+      'display' => array(),
+    ),
+  );
+  $export['field_bundle_settings_node__article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'field_bundle_settings_user__user';
   $strongarm->value = array(
     'view_modes' => array(
@@ -1060,6 +1126,13 @@ within 24 hours.
   $strongarm->name = 'jquery_update_jquery_version';
   $strongarm->value = '1.10';
   $export['jquery_update_jquery_version'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'language_content_type_article';
+  $strongarm->value = '0';
+  $export['language_content_type_article'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -1338,8 +1411,25 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'menu_options_article';
+  $strongarm->value = array();
+  $export['menu_options_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'menu_parent_article';
+  $strongarm->value = 'main-menu:0';
+  $export['menu_parent_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'messages_alter_theme_altered';
-  $strongarm->value = 'theme_status_messages';
+  $strongarm->value = array(
+    'bartik' => 'theme_status_messages',
+    'seven' => 'theme_status_messages',
+  );
   $export['messages_alter_theme_altered'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -1375,19 +1465,8 @@ within 24 hours.
   $strongarm->api_version = 1;
   $strongarm->name = 'module_filter_recent_modules';
   $strongarm->value = array(
-    'agreement' => 1459118669,
-    'autologout' => 1459118669,
-    'backup_migrate' => 1459118669,
     'token' => 1459388324,
-    'captcha' => 1459118669,
     'captcha_after' => 1459454178,
-    'ctools' => 1459116664,
-    'color' => 1459118669,
-    'contextual' => 1459118902,
-    'ckeditor' => 1459118669,
-    'block' => 1459118669,
-    'module_filter' => 1459118447,
-    'comment' => 1459118669,
     'custom_add_another' => 1459405216,
     'csm' => 1459706476,
     'date' => 1459408174,
@@ -1396,18 +1475,11 @@ within 24 hours.
     'emaillog' => 1459409040,
     'entityreference' => 1459402760,
     'entityreference_prepopulate' => 1459402760,
-    'entity' => 1459119489,
     'entity_token' => 1459388324,
     'eva' => 1459409079,
     'extlink' => 1459408914,
     'extlink_extra' => 1459408914,
-    'tfa_basic' => 1459119931,
-    'tfa' => 1459119931,
-    'menu' => 1459119999,
     'filter_perms' => 1459396778,
-    'spamspan' => 1459121179,
-    'field_collection' => 1459122725,
-    'field_group' => 1459122725,
     'errorlog' => 1459706501,
     'views_ui' => 1459409131,
     'user_stats' => 1459237182,
@@ -1483,6 +1555,11 @@ within 24 hours.
     'flood_unblock' => 1459707160,
     'multistep' => 1459707172,
     'static_field' => 1459707204,
+    'read_more' => 1459724908,
+    'variable' => 1459723787,
+    'features_basic_page' => 1459726619,
+    'features_rotator' => 1459726619,
+    'features_pages' => 1459729021,
   );
   $export['module_filter_recent_modules'] = $strongarm;
 
@@ -1553,7 +1630,7 @@ within 24 hours.
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'node_cron_last';
-  $strongarm->value = '1459647490';
+  $strongarm->value = '1459725303';
   $export['node_cron_last'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -1573,11 +1650,34 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'node_options_article';
+  $strongarm->value = array(
+    0 => 'status',
+  );
+  $export['node_options_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_options_page';
   $strongarm->value = array(
     0 => 'status',
   );
   $export['node_options_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_preview_article';
+  $strongarm->value = '1';
+  $export['node_preview_article'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_submitted_article';
+  $strongarm->value = 0;
+  $export['node_submitted_article'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -1605,6 +1705,7 @@ within 24 hours.
   $strongarm->api_version = 1;
   $strongarm->name = 'path_alias_whitelist';
   $strongarm->value = array(
+    'node' => TRUE,
     'taxonomy' => TRUE,
   );
   $export['path_alias_whitelist'] = $strongarm;
@@ -1945,7 +2046,7 @@ within 24 hours.
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'update_last_check';
-  $strongarm->value = 1459702376;
+  $strongarm->value = 1459747110;
   $export['update_last_check'] = $strongarm;
 
   $strongarm = new stdClass();
