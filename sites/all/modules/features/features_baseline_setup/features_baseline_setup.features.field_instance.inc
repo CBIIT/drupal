@@ -228,7 +228,7 @@ function features_baseline_setup_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => -4,
+      'weight' => 1,
     ),
   );
 
@@ -283,7 +283,7 @@ function features_baseline_setup_field_default_field_instances() {
         'progress_indicator' => 'throbber',
       ),
       'type' => 'image_image',
-      'weight' => -1,
+      'weight' => 3,
     ),
   );
 
@@ -325,7 +325,7 @@ function features_baseline_setup_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'taxonomy_autocomplete',
-      'weight' => -4,
+      'weight' => 2,
     ),
   );
 
