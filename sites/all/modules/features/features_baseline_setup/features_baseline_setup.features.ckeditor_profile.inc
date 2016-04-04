@@ -26,7 +26,7 @@ function features_baseline_setup_ckeditor_profile_defaults() {
     [\'JustifyLeft\',\'JustifyCenter\',\'JustifyRight\',\'JustifyBlock\',\'-\',\'BidiLtr\',\'BidiRtl\'],
     [\'Link\',\'Unlink\',\'Anchor\']
 ]',
-        'expand' => 'f',
+        'expand' => 't',
         'default' => 't',
         'show_toggle' => 'f',
         'uicolor' => 'default',
@@ -127,7 +127,7 @@ function features_baseline_setup_ckeditor_profile_defaults() {
     [\'JustifyLeft\',\'JustifyCenter\',\'JustifyRight\',\'JustifyBlock\',\'-\',\'BidiLtr\',\'BidiRtl\'],
     [\'Link\',\'Unlink\',\'Anchor\']
 ]',
-        'expand' => 'f',
+        'expand' => 't',
         'default' => 't',
         'show_toggle' => 'f',
         'uicolor' => 'default',
