@@ -55,24 +55,30 @@
  */
 
 /* LOCAL */
-$sites['nci-itcr.local']       = 'nci-itcr';
+$sites['127.0.0.1']            = 'nci-nctn';
 $sites['nci-nctn.local']       = 'nci-nctn';
+$sites['nci-itcr.local']       = 'nci-itcr';
 
 /* AWS CI/QA */
 $sites['174.129.249.95']       = 'nci-nctn';
-$sites['nci-itcr.qa']          = 'nci-itcr';
 $sites['nci-nctn.qa']          = 'nci-nctn';
+$sites['nci-itcr.qa']          = 'nci-itcr';
 
 /* AWS UAT */
 $sites['50.17.223.185']        = 'nci-nctn';
-$sites['nci-itcr.uat']         = 'nci-itcr';
 $sites['nci-nctn.uat']         = 'nci-nctn';
+$sites['nci-itcr.uat']         = 'nci-itcr';
+
+/* NCI DEV */
+$sites['nctn-dev.nci.nih.gov']       = 'nci-nctn';
+$sites['443.nctn-dev.nci.nih.gov']   = 'nci-nctn';
+$sites['nci-nctn.dev']               = 'nci-nctn';
+$sites['itcrd7-dev.nci.nih.gov']     = 'nci-itcr';
+$sites['443.itcrd7-dev.nci.nih.gov'] = 'nci-itcr';
+$sites['nci-itcr.dev']               = 'nci-itcr';
 
 /* NCI STAGE */
-$sites['10.133.202.147']       = 'nci-nctn';
-$sites['nci-itcr.stage']       = 'nci-itcr';
-$sites['nci-nctn.stage']       = 'nci-nctn';
-$sites['itcr-dev.nci.nih.gov'] = 'nci-itcr';
-$sites['nctn-dev.nci.nih.gov'] = 'nci-nctn';
-
-
+$sites['10.133.202.147']                      = 'nci-nctn';
+$sites['nctn-data-archive-stage.nci.nih.gov'] = 'nci-nctn';
+$sites['nci-nctn.stage']                      = 'nci-nctn';
+$sites['nci-itcr.stage']                      = 'nci-itcr';
