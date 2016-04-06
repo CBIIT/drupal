@@ -13,6 +13,6 @@ function csm_uninstall() {
   drupal_load('module', 'csm');
   $variables = array_values(csm_variables());
   foreach ($variables as $variable) {
-    variable_del($variable);
+  variable_del($variable);
   }
 }

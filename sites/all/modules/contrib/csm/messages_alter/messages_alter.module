@@ -49,10 +49,9 @@ function messages_alter_theme() {
  * Implements hook_theme_registry_alter().
  */
 function messages_alter_theme_registry_alter(&$theme_registry) {
-  global $theme;
-  $registry_alter = variable_get('messages_alter_theme_altered', array());
-  $registry_alter[$theme] = $theme_registry['status_messages']['function'];
-  variable_set('messages_alter_theme_altered', $registry_alter);
+  if (!variable_get('messages_alter_theme_altered', FALSE)) {
+    variable_set('messages_alter_theme_altered', $theme_registry['status_messages']['function']);
+  }
   $theme_registry['status_messages']['function'] = 'theme_messages_alter_alter';
 }
 
@@ -62,11 +61,8 @@ function messages_alter_theme_registry_alter(&$theme_registry) {
  * theme('status_messages');
  */
 function theme_messages_alter_alter($variables) {
-  global $theme;
-
-  $registry_alter = variable_get('messages_alter_theme_altered', array());
   messages_alter_invoke_message_alter();
-  $output = theme('messages_alter_status_messages', array('variables' => $variables, 'theme_function' => !empty($registry_alter[$theme]) ? $registry_alter[$theme] : FALSE ));
+  $output = theme('messages_alter_status_messages', array('variables' => $variables, 'theme_function' => variable_get('messages_alter_theme_altered', FALSE)));
   return $output;
 }
 
@@ -76,7 +72,9 @@ function theme_messages_alter_alter($variables) {
  */
 function theme_messages_alter_status_messages($variables) {
 
-  $theme_function = !empty($variables['theme_function']) ? $variables['theme_function'] : 'theme_status_messages';
+  $output = '';
+
+  $theme_function = isset($variables['theme_function']) && !empty($variables['theme_function']) ? $variables['theme_function'] : 'theme_status_messages';
   $output = $theme_function($variables['variables']);
 
   return $output;
@@ -114,6 +112,11 @@ function messages_alter_get_messages($reset = FALSE) {
   static $return;
 
   if (!isset($return) || $reset) {
+
+    if (!isset($_SESSION['messages'])) {
+      $_SESSION['messages'] = array();
+    }
+
     // I'm doing a "version" thingy here because
     // I've always thought it was rude for
     // modules to upgrade and then break
@@ -124,6 +127,7 @@ function messages_alter_get_messages($reset = FALSE) {
     $path = drupal_get_path('module', 'messages_alter');
     require_once($path . '/lib/MessagesAlter.' . $version . '.php');
     $return = new MessagesAlter($_SESSION['messages']);
+
   }
 
   return $return;

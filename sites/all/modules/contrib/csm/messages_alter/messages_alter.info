@@ -2,9 +2,9 @@ name = Messages Alter
 description = This module adds a custom hook_message_alter().
 core = 7.x
 
-; Information added by Drupal.org packaging script on 2015-11-25
-version = "7.x-1.0-beta9"
+; Information added by Drupal.org packaging script on 2014-05-18
+version = "7.x-1.0-beta5"
 core = "7.x"
 project = "csm"
-datestamp = "1448478240"
+datestamp = "1400434428"
 

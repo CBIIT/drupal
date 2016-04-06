@@ -3,11 +3,9 @@ description = Allows users to change the message that is displayed when a node i
 core = 7.x
 dependencies[] = token
 dependencies[] = messages_alter
-
-configure = admin/config/csm/csm
-; Information added by Drupal.org packaging script on 2015-11-25
-version = "7.x-1.0-beta9"
+; Information added by Drupal.org packaging script on 2014-05-18
+version = "7.x-1.0-beta5"
 core = "7.x"
 project = "csm"
-datestamp = "1448478240"
+datestamp = "1400434428"
 
