@@ -324,13 +324,13 @@ function session_limit_field_extra_fields() {
  */
 function session_limit_user_view($account, $view_mode) {
   if (user_access('administer session limits per user')) {
-    $account->content['session_limit'] = array(
+    /*$account->content['session_limit'] = array(
       '#title' => t('Session limit'),
       '#type' => 'user_profile_category',
       'session_limit' => array(
         '#markup' => empty($account->data['session_limit']) ? t('Default') : $account->data['session_limit'],
       )
-    );
+    );*/
   }
 }
 
