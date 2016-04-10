@@ -1,0 +1,141 @@
+diff --git a/modules/events.inc b/modules/events.inc
+index 4ac9760..a702588 100644
+--- a/modules/events.inc
++++ b/modules/events.inc
+@@ -56,6 +56,10 @@ function rules_entity_view($entity, $type, $view_mode, $langcode) {
+  */
+ function rules_entity_presave($entity, $type) {
+   switch ($type) {
++    case 'file':
++      rules_invoke_event('file_presave--' . $entity->type, $entity);
++      rules_invoke_event('file_presave', $entity);
++      break;
+     case 'comment':
+       rules_invoke_event('comment_presave--' . $entity->node_type, $entity);
+       rules_invoke_event('comment_presave', $entity);
+@@ -80,6 +84,10 @@ function rules_entity_presave($entity, $type) {
+  */
+ function rules_entity_update($entity, $type) {
+   switch ($type) {
++    case 'file':
++      rules_invoke_event('file_update--' . $entity->type, $entity);
++      rules_invoke_event('file_update', $entity);
++      break;
+     case 'comment':
+       rules_invoke_event('comment_update--' . $entity->node_type, $entity);
+       rules_invoke_event('comment_update', $entity);
+@@ -104,6 +112,10 @@ function rules_entity_update($entity, $type) {
+  */
+ function rules_entity_insert($entity, $type) {
+   switch ($type) {
++    case 'file':
++      rules_invoke_event('file_insert--' . $entity->type, $entity);
++      rules_invoke_event('file_insert', $entity);
++      break;
+     case 'comment':
+       rules_invoke_event('comment_insert--' . $entity->node_type, $entity);
+       rules_invoke_event('comment_insert', $entity);
+diff --git a/modules/file.rules.inc b/modules/file.rules.inc
+new file mode 100644
+index 0000000..08ea292
+--- /dev/null
++++ b/modules/file.rules.inc
+@@ -0,0 +1,85 @@
++<?php
++
++/**
++ * @file rules integration for the file module
++ *
++ * @addtogroup rules
++ * @{
++ */
++
++/**
++ * Implements hook_rules_event_info() on behalf of the file module.
++ */
++function rules_file_event_info() {
++  $items = array(
++    'file_insert' => array(
++      'label' => t('After saving new file'),
++      'group' => t('File'),
++      'variables' => rules_events_file_variables(t('created file')),
++      'access callback' => 'rules_file_integration_access',
++    ),
++    'file_update' => array(
++      'label' => t('After updating existing file'),
++      'group' => t('File'),
++      'variables' => rules_events_file_variables(t('updated file'), TRUE),
++      'access callback' => 'rules_file_integration_access',
++    ),
++    'file_presave' => array(
++      'label' => t('Before saving file'),
++      'group' => t('File'),
++      'variables' => rules_events_file_variables(t('saved file'), TRUE),
++      'access callback' => 'rules_file_integration_access',
++    ),
++
++    /**
++     * @todo, add support for more file module hooks.
++     * Eligible hooks include:
++     * hook_file_copy
++     * hook_file_delete
++     * hook_file_download
++     * hook_file_download_access
++     * hook_file_download_access_alter
++     * hook_file_load
++     * hook_file_mimetype_mapping_alter
++     * hook_file_move
++     * hook_file_url_alter
++     * hook_file_validate
++     *
++     * Some of these might not work as Rules events.
++     */
++  );
++
++  return $items;
++}
++
++/**
++ * Returns some parameter suitable for using it with a file
++ */
++function rules_events_file_variables($file_label, $update = FALSE) {
++  $args = array(
++    'file' => array('type' => 'file', 'label' => $file_label),
++  );
++
++  if ($update) {
++    $args += array(
++      'file_unchanged' => array(
++        'type' => 'file',
++        'label' => t('unchanged file'),
++        'handler' => 'rules_events_entity_unchanged',
++      ),
++    );
++  }
++  return $args;
++}
++
++/**
++ * File integration access callback.
++ *
++ * @todo, this is modeled on rules_node_integration_access(). Not sure what it does.
++ * It does not seem to get called.
++ */
++function rules_file_integration_access($type, $name) {
++  if ($type == 'event' || $type == 'condition') {
++    return entity_access('view', 'file');
++  }
++}
+diff --git a/rules.rules.inc b/rules.rules.inc
+index 3beb76e..936c7da 100644
+--- a/rules.rules.inc
++++ b/rules.rules.inc
+@@ -21,7 +21,7 @@ foreach (rules_core_modules() as $module) {
+  */
+ function rules_core_modules() {
+   $return = array('data', 'entity', 'node', 'system', 'user', 'rules_core');
+-  foreach (array('comment', 'taxonomy', 'php', 'path') as $module) {
++  foreach (array('comment', 'taxonomy', 'php', 'path', 'file') as $module) {
+     if (module_exists($module)) {
+       $return[] = $module;
+     }
