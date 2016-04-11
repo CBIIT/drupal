@@ -1,0 +1,60 @@
+diff --git a/messages_alter/messages_alter.install b/messages_alter/messages_alter.install
+index e83aa6c..df4faf0 100644
+--- a/messages_alter/messages_alter.install
++++ b/messages_alter/messages_alter.install
+@@ -45,4 +45,11 @@ function messages_alter_update_6001() {
+   variable_set('messages_alter_version_latest', '7.x-1.3');
+   variable_set('messages_alter_version', '7.x-1.3');
+   return;
+-}
+\ No newline at end of file
++}
++
++/**
++ * Reset internally used variable.
++ */
++function messages_alter_update_7001() {
++  variable_del('messages_alter_theme_altered');
++}
+diff --git a/messages_alter/messages_alter.module b/messages_alter/messages_alter.module
+index bb6f651..1c73c2d 100644
+--- a/messages_alter/messages_alter.module
++++ b/messages_alter/messages_alter.module
+@@ -49,9 +49,10 @@ function messages_alter_theme() {
+  * Implements hook_theme_registry_alter().
+  */
+ function messages_alter_theme_registry_alter(&$theme_registry) {
+-  if (!variable_get('messages_alter_theme_altered', FALSE)) {
+-    variable_set('messages_alter_theme_altered', $theme_registry['status_messages']['function']);
+-  }
++  global $theme;
++  $registry_alter = variable_get('messages_alter_theme_altered', array());
++  $registry_alter[$theme] = $theme_registry['status_messages']['function'];
++  variable_set('messages_alter_theme_altered', $registry_alter);
+   $theme_registry['status_messages']['function'] = 'theme_messages_alter_alter';
+ }
+ 
+@@ -61,8 +62,11 @@ function messages_alter_theme_registry_alter(&$theme_registry) {
+  * theme('status_messages');
+  */
+ function theme_messages_alter_alter($variables) {
++  global $theme;
++
++  $registry_alter = variable_get('messages_alter_theme_altered', array());
+   messages_alter_invoke_message_alter();
+-  $output = theme('messages_alter_status_messages', array('variables' => $variables, 'theme_function' => variable_get('messages_alter_theme_altered', FALSE)));
++  $output = theme('messages_alter_status_messages', array('variables' => $variables, 'theme_function' => !empty($registry_alter[$theme]) ? $registry_alter[$theme] : FALSE ));
+   return $output;
+ }
+ 
+@@ -72,9 +76,7 @@ function theme_messages_alter_alter($variables) {
+  */
+ function theme_messages_alter_status_messages($variables) {
+ 
+-  $output = '';
+-
+-  $theme_function = isset($variables['theme_function']) && !empty($variables['theme_function']) ? $variables['theme_function'] : 'theme_status_messages';
++  $theme_function = !empty($variables['theme_function']) ? $variables['theme_function'] : 'theme_status_messages';
+   $output = $theme_function($variables['variables']);
+ 
+   return $output;

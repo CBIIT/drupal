@@ -46,3 +46,10 @@ function messages_alter_update_6001() {
   variable_set('messages_alter_version', '7.x-1.3');
   return;
 }
+
+/**
+ * Reset internally used variable.
+ */
+function messages_alter_update_7001() {
+  variable_del('messages_alter_theme_altered');
+}
