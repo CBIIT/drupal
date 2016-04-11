@@ -1,5 +1,7 @@
 # Ignore Mac-generated files
+*/.DS_Store
 .DS_Store
+
 
 # Ignore paths that are not part of the Git repository
 sites/nci-nctn
