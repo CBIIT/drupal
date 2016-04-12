@@ -881,11 +881,6 @@ function user_permission() {
       'title' => t('Administer users'),
       'restrict access' => TRUE,
     ),
-    'administer user settings' => array(
-      'title' => t('Administer user settings'),
-      'description' => t('Manage settings that apply to all user accounts.'),
-      'restrict access' => TRUE,
-    ),
     'access user profiles' => array(
       'title' => t('View user profiles'),
     ),
@@ -1781,7 +1776,7 @@ function user_menu() {
     'description' => 'Configure default behavior of users, including registration requirements, e-mails, fields, and user pictures.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('user_admin_settings'),
-    'access arguments' => array('administer user settings'),
+    'access arguments' => array('administer users'),
     'file' => 'user.admin.inc',
     'weight' => -10,
   );
