@@ -186,24 +186,6 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'user',
   );
 
-  // Exported permission: 'admin tfa settings'.
-  $permissions['admin tfa settings'] = array(
-    'name' => 'admin tfa settings',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-    ),
-    'module' => 'tfa',
-  );
-
-  // Exported permission: 'administer CAPTCHA settings'.
-  $permissions['administer CAPTCHA settings'] = array(
-    'name' => 'administer CAPTCHA settings',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-    ),
-    'module' => 'captcha',
-  );
-
   // Exported permission: 'administer actions'.
   $permissions['administer actions'] = array(
     'name' => 'administer actions',
@@ -441,15 +423,6 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: 'administer password policies'.
-  $permissions['administer password policies'] = array(
-    'name' => 'administer password policies',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-    ),
-    'module' => 'password_policy',
-  );
-
   // Exported permission: 'administer permissions'.
   $permissions['administer permissions'] = array(
     'name' => 'administer permissions',
@@ -644,24 +617,6 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'user',
   );
 
-  // Exported permission: 'change article creation page title'.
-  $permissions['change article creation page title'] = array(
-    'name' => 'change article creation page title',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-    ),
-    'module' => 'csm',
-  );
-
-  // Exported permission: 'change article submit messages'.
-  $permissions['change article submit messages'] = array(
-    'name' => 'change article submit messages',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-    ),
-    'module' => 'csm',
-  );
-
   // Exported permission: 'change own e-mail'.
   $permissions['change own e-mail'] = array(
     'name' => 'change own e-mail',
@@ -712,34 +667,6 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'user',
   );
 
-  // Exported permission: 'change page creation page title'.
-  $permissions['change page creation page title'] = array(
-    'name' => 'change page creation page title',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-    ),
-    'module' => 'csm',
-  );
-
-  // Exported permission: 'change page submit messages'.
-  $permissions['change page submit messages'] = array(
-    'name' => 'change page submit messages',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-    ),
-    'module' => 'csm',
-  );
-
-  // Exported permission: 'create article content'.
-  $permissions['create article content'] = array(
-    'name' => 'create article content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'create files'.
   $permissions['create files'] = array(
     'name' => 'create files',
@@ -748,16 +675,6 @@ function features_baseline_setup_user_default_permissions() {
       'Manager' => 'Manager',
     ),
     'module' => 'file_entity',
-  );
-
-  // Exported permission: 'create page content'.
-  $permissions['create page content'] = array(
-    'name' => 'create page content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
   );
 
   // Exported permission: 'create url aliases'.
@@ -785,16 +702,6 @@ function features_baseline_setup_user_default_permissions() {
       'Administrator' => 'Administrator',
     ),
     'module' => 'shortcut',
-  );
-
-  // Exported permission: 'delete any article content'.
-  $permissions['delete any article content'] = array(
-    'name' => 'delete any article content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
   );
 
   // Exported permission: 'delete any audio files'.
@@ -827,16 +734,6 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'file_entity',
   );
 
-  // Exported permission: 'delete any page content'.
-  $permissions['delete any page content'] = array(
-    'name' => 'delete any page content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'delete any video files'.
   $permissions['delete any video files'] = array(
     'name' => 'delete any video files',
@@ -864,16 +761,6 @@ function features_baseline_setup_user_default_permissions() {
       'Manager' => 'Manager',
     ),
     'module' => 'maillog',
-  );
-
-  // Exported permission: 'delete own article content'.
-  $permissions['delete own article content'] = array(
-    'name' => 'delete own article content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
   );
 
   // Exported permission: 'delete own audio files'.
@@ -904,16 +791,6 @@ function features_baseline_setup_user_default_permissions() {
       'Manager' => 'Manager',
     ),
     'module' => 'file_entity',
-  );
-
-  // Exported permission: 'delete own page content'.
-  $permissions['delete own page content'] = array(
-    'name' => 'delete own page content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
   );
 
   // Exported permission: 'delete own video files'.
@@ -1026,16 +903,6 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'file_entity',
   );
 
-  // Exported permission: 'edit any article content'.
-  $permissions['edit any article content'] = array(
-    'name' => 'edit any article content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'edit any audio files'.
   $permissions['edit any audio files'] = array(
     'name' => 'edit any audio files',
@@ -1066,16 +933,6 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'file_entity',
   );
 
-  // Exported permission: 'edit any page content'.
-  $permissions['edit any page content'] = array(
-    'name' => 'edit any page content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'edit any video files'.
   $permissions['edit any video files'] = array(
     'name' => 'edit any video files',
@@ -1095,16 +952,6 @@ function features_baseline_setup_user_default_permissions() {
       'authenticated user' => 'authenticated user',
     ),
     'module' => 'userprotect',
-  );
-
-  // Exported permission: 'edit own article content'.
-  $permissions['edit own article content'] = array(
-    'name' => 'edit own article content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
   );
 
   // Exported permission: 'edit own audio files'.
@@ -1147,16 +994,6 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'file_entity',
   );
 
-  // Exported permission: 'edit own page content'.
-  $permissions['edit own page content'] = array(
-    'name' => 'edit own page content',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'edit own video files'.
   $permissions['edit own video files'] = array(
     'name' => 'edit own video files',
@@ -1193,16 +1030,6 @@ function features_baseline_setup_user_default_permissions() {
       'Administrator' => 'Administrator',
     ),
     'module' => 'node_export',
-  );
-
-  // Exported permission: 'force password change'.
-  $permissions['force password change'] = array(
-    'name' => 'force password change',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'password_policy',
   );
 
   // Exported permission: 'generate features'.
@@ -1320,23 +1147,6 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'user',
   );
 
-  // Exported permission: 'setup own tfa'.
-  $permissions['setup own tfa'] = array(
-    'name' => 'setup own tfa',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'tfa_basic',
-  );
-
-  // Exported permission: 'skip CAPTCHA'.
-  $permissions['skip CAPTCHA'] = array(
-    'name' => 'skip CAPTCHA',
-    'roles' => array(),
-    'module' => 'captcha',
-  );
-
   // Exported permission: 'skip comment approval'.
   $permissions['skip comment approval'] = array(
     'name' => 'skip comment approval',
@@ -1374,16 +1184,6 @@ function features_baseline_setup_user_default_permissions() {
       'Administrator' => 'Administrator',
     ),
     'module' => 'locale',
-  );
-
-  // Exported permission: 'unblock expired accounts'.
-  $permissions['unblock expired accounts'] = array(
-    'name' => 'unblock expired accounts',
-    'roles' => array(
-      'Administrator' => 'Administrator',
-      'Manager' => 'Manager',
-    ),
-    'module' => 'password_policy',
   );
 
   // Exported permission: 'use PHP for title patterns'.

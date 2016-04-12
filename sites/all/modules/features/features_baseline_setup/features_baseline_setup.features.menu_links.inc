@@ -27,7 +27,7 @@ function features_baseline_setup_menu_default_menu_links() {
     'external' => 1,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => 0,
+    'weight' => -49,
     'customized' => 1,
   );
   // Exported menu link: menu-menu-footer_disclaimer:http://www.cancer.gov/policies/disclaimer.
@@ -47,7 +47,7 @@ function features_baseline_setup_menu_default_menu_links() {
     'external' => 1,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => 0,
+    'weight' => -48,
     'customized' => 1,
   );
   // Exported menu link: menu-menu-footer_foia:http://www.cancer.gov/policies/foia.
@@ -67,27 +67,7 @@ function features_baseline_setup_menu_default_menu_links() {
     'external' => 1,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => 0,
-    'customized' => 1,
-  );
-  // Exported menu link: menu-menu-footer_privacy--security:http://www.cancer.gov/policies/privacy-security.
-  $menu_links['menu-menu-footer_privacy--security:http://www.cancer.gov/policies/privacy-security'] = array(
-    'menu_name' => 'menu-menu-footer',
-    'link_path' => 'http://www.cancer.gov/policies/privacy-security',
-    'router_path' => '',
-    'link_title' => 'Privacy & Security',
-    'options' => array(
-      'attributes' => array(
-        'title' => '',
-      ),
-      'identifier' => 'menu-menu-footer_privacy--security:http://www.cancer.gov/policies/privacy-security',
-    ),
-    'module' => 'menu',
-    'hidden' => 0,
-    'external' => 1,
-    'has_children' => 0,
-    'expanded' => 0,
-    'weight' => 0,
+    'weight' => -47,
     'customized' => 1,
   );
 
@@ -96,7 +76,6 @@ function features_baseline_setup_menu_default_menu_links() {
   t('Accessibility');
   t('Disclaimer');
   t('FOIA');
-  t('Privacy & Security');
 
   return $menu_links;
 }

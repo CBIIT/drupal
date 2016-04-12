@@ -70,8 +70,7 @@ function features_baseline_setup_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'agreement_page_visibility_pages';
-  $strongarm->value = '<front>
-user/*/edit
+  $strongarm->value = 'user/*/edit
 user/*/password';
   $export['agreement_page_visibility_pages'] = $strongarm;
 
@@ -109,10 +108,12 @@ user/*/password';
   $strongarm->name = 'agreement_text';
   $strongarm->value = array(
     'value' => '<p>This is a U.S. Government computer system, which may be accessed and used only for authorized Government business by authorized personnel. Unauthorized access or use of this computer system may subject violators to criminal, civil, and/or administrative action.</p>
+
 <p>All information on this computer system may be intercepted, recorded, read, copied, and disclosed by and to authorized personnel for official purposes, including criminal investigations. Such information includes sensitive data encrypted to comply with confidentiality and privacy requirements. Access or use of this computer system by any person, whether authorized or unauthorized, constitutes consent to these terms. There is no right of privacy in this system.</p>
+
 <p><strong>Note: By logging into the system you are accepting to the above. If you do not agree please <a href="/user/logout">log out</a>.</strong></p>
- ',
-    'format' => 'plain_text',
+',
+    'format' => 'filtered_html',
   );
   $export['agreement_text'] = $strongarm;
 
@@ -280,111 +281,6 @@ user/*/password';
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_add_captcha_description';
-  $strongarm->value = 1;
-  $export['captcha_add_captcha_description'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_administration_mode';
-  $strongarm->value = 0;
-  $export['captcha_administration_mode'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_after_flooding_threshold';
-  $strongarm->value = '20';
-  $export['captcha_after_flooding_threshold'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_after_global_flooding_threshold';
-  $strongarm->value = '1000';
-  $export['captcha_after_global_flooding_threshold'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_after_submit_threshold';
-  $strongarm->value = '5';
-  $export['captcha_after_submit_threshold'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_allow_on_admin_pages';
-  $strongarm->value = 0;
-  $export['captcha_allow_on_admin_pages'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_default_challenge';
-  $strongarm->value = 'captcha/Math';
-  $export['captcha_default_challenge'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_default_challenge_on_nonlisted_forms';
-  $strongarm->value = 0;
-  $export['captcha_default_challenge_on_nonlisted_forms'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_default_validation';
-  $strongarm->value = '1';
-  $export['captcha_default_validation'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_description';
-  $strongarm->value = 'This question is for testing whether or not you are a human visitor and to prevent automated spam submissions.';
-  $export['captcha_description'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_description_en';
-  $strongarm->value = 'This question is for testing whether or not you are a human visitor and to prevent automated spam submissions.';
-  $export['captcha_description_en'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_enable_stats';
-  $strongarm->value = 1;
-  $export['captcha_enable_stats'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_log_wrong_responses';
-  $strongarm->value = 0;
-  $export['captcha_log_wrong_responses'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_persistence';
-  $strongarm->value = '1';
-  $export['captcha_persistence'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'captcha_wrong_response_counter';
-  $strongarm->value = 1;
-  $export['captcha_wrong_response_counter'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'clean_url';
   $strongarm->value = TRUE;
   $export['clean_url'] = $strongarm;
@@ -399,62 +295,6 @@ user/*/password';
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'comment_anonymous_article';
-  $strongarm->value = 0;
-  $export['comment_anonymous_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'comment_article';
-  $strongarm->value = '1';
-  $export['comment_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'comment_default_mode_article';
-  $strongarm->value = 0;
-  $export['comment_default_mode_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'comment_default_per_page_article';
-  $strongarm->value = '50';
-  $export['comment_default_per_page_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'comment_form_location_article';
-  $strongarm->value = 0;
-  $export['comment_form_location_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'comment_page';
-  $strongarm->value = 0;
-  $export['comment_page'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'comment_preview_article';
-  $strongarm->value = '0';
-  $export['comment_preview_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'comment_subject_field_article';
-  $strongarm->value = 0;
-  $export['comment_subject_field_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'cron_key';
   $strongarm->value = 'FERNBgeQ-whrgrszvGVPKHwUubvSm5irZfsz9VbqIiY';
   $export['cron_key'] = $strongarm;
@@ -463,14 +303,14 @@ user/*/password';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'cron_last';
-  $strongarm->value = 1459747104;
+  $strongarm->value = 1460435793;
   $export['cron_last'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'ctools_last_cron';
-  $strongarm->value = 1459728539;
+  $strongarm->value = 1460424856;
   $export['ctools_last_cron'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -622,8 +462,8 @@ user/*/password';
   $strongarm->name = 'emaillog_last_message';
   $strongarm->value = array(
     'message' => 'php%type: !message in %function (line %line of %file).',
-    'time' => 1459659009,
-    'count' => 2,
+    'time' => 1459818162,
+    'count' => 1,
   );
   $export['emaillog_last_message'] = $strongarm;
 
@@ -654,58 +494,6 @@ user/*/password';
   $strongarm->name = 'emaillog_max_similar_emails';
   $strongarm->value = '20';
   $export['emaillog_max_similar_emails'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'email_confirm_confirmation_email_author';
-  $strongarm->value = 'test@example.com';
-  $export['email_confirm_confirmation_email_author'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'email_confirm_confirmation_email_bcc';
-  $strongarm->value = '';
-  $export['email_confirm_confirmation_email_bcc'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'email_confirm_confirmation_email_body';
-  $strongarm->value = 'Hello [user:name],
-
-A request to change your email address has been made at [site:name].
-You need to verify the change by clicking on the link below or by
-copying and pasting it in your browser:
-
-[email_confirm:email_url]
-
-This is a one-time URL - it can be used only once. It expires after
-24 hours. If you do not click the link to confirm, your email address
-at [site:name] will not be updated.
-';
-  $export['email_confirm_confirmation_email_body'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'email_confirm_confirmation_email_subject';
-  $strongarm->value = 'Email address change request for [user:name] at [site:name]';
-  $export['email_confirm_confirmation_email_subject'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'email_confirm_confirmation_original_email_body';
-  $strongarm->value = 'Hello [user:name],
-
-A request to change your email address has been made at [site:name].
-In order to confirm the update of your email address you will
-need to follow the instructions sent to your new email address
-within 24 hours.
-';
-  $export['email_confirm_confirmation_original_email_body'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -981,23 +769,6 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'field_bundle_settings_node__article';
-  $strongarm->value = array(
-    'view_modes' => array(),
-    'extra_fields' => array(
-      'form' => array(
-        'title' => array(
-          'weight' => '0',
-        ),
-      ),
-      'display' => array(),
-    ),
-  );
-  $export['field_bundle_settings_node__article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'field_bundle_settings_user__user';
   $strongarm->value = array(
     'view_modes' => array(
@@ -1130,156 +901,9 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'language_content_type_article';
-  $strongarm->value = '0';
-  $export['language_content_type_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'legal_display';
   $strongarm->value = '2';
   $export['legal_display'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_activity_threshold';
-  $strongarm->value = '6';
-  $export['login_security_activity_threshold'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_disable_core_login_error';
-  $strongarm->value = 0;
-  $export['login_security_disable_core_login_error'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_host_hard_banned';
-  $strongarm->value = 'The IP address @ip is banned at @site, and will not be able to access any of its content from now on. Please contact the site administrator.';
-  $export['login_security_host_hard_banned'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_host_soft_banned';
-  $strongarm->value = 'This host is not allowed to log in to @site. Please contact your site administrator.';
-  $export['login_security_host_soft_banned'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_host_wrong_count';
-  $strongarm->value = '0';
-  $export['login_security_host_wrong_count'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_host_wrong_count_hard';
-  $strongarm->value = '0';
-  $export['login_security_host_wrong_count_hard'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_last_access_timestamp';
-  $strongarm->value = 0;
-  $export['login_security_last_access_timestamp'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_last_login_timestamp';
-  $strongarm->value = 1;
-  $export['login_security_last_login_timestamp'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_login_activity_email_body';
-  $strongarm->value = 'The configured threshold of @activity_threshold logins has been reached with a total of @tracking_current_count invalid login attempts. You should review your log information about login attempts at @site.';
-  $export['login_security_login_activity_email_body'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_login_activity_email_subject';
-  $strongarm->value = 'Security information: Unexpected login activity has been detected at @site.';
-  $export['login_security_login_activity_email_subject'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_login_activity_email_user';
-  $strongarm->value = '';
-  $export['login_security_login_activity_email_user'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_notice_attempts_available';
-  $strongarm->value = 0;
-  $export['login_security_notice_attempts_available'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_notice_attempts_message';
-  $strongarm->value = 'You have used @user_current_count out of @user_block_attempts login attempts. After all @user_block_attempts have been used, you will be unable to login.';
-  $export['login_security_notice_attempts_message'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_threshold_notified';
-  $strongarm->value = FALSE;
-  $export['login_security_threshold_notified'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_track_time';
-  $strongarm->value = '1';
-  $export['login_security_track_time'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_user_blocked';
-  $strongarm->value = 'The user @username has been blocked due to failed login attempts.';
-  $export['login_security_user_blocked'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_user_blocked_email_body';
-  $strongarm->value = 'The user @username (@edit_uri) has been blocked at @site due to the amount of failed login attempts. Please check the logs for more information.';
-  $export['login_security_user_blocked_email_body'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_user_blocked_email_subject';
-  $strongarm->value = 'Security action: The user @username has been blocked.';
-  $export['login_security_user_blocked_email_subject'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_user_blocked_email_user';
-  $strongarm->value = '';
-  $export['login_security_user_blocked_email_user'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'login_security_user_wrong_count';
-  $strongarm->value = '0';
-  $export['login_security_user_wrong_count'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -1357,7 +981,10 @@ within 24 hours.
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_expanded';
-  $strongarm->value = array();
+  $strongarm->value = array(
+    0 => 'main-menu',
+    1 => 'navigation',
+  );
   $export['menu_expanded'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -1394,33 +1021,20 @@ within 24 hours.
     26 => 24,
     27 => 23,
     28 => 21,
-    29 => 15,
-    30 => 14,
-    31 => 13,
-    32 => 12,
-    33 => 11,
-    34 => 7,
-    35 => 6,
-    36 => 5,
-    37 => 3,
-    38 => 2,
-    39 => 1,
+    29 => 20,
+    30 => 15,
+    31 => 14,
+    32 => 13,
+    33 => 12,
+    34 => 11,
+    35 => 7,
+    36 => 6,
+    37 => 5,
+    38 => 3,
+    39 => 2,
+    40 => 1,
   );
   $export['menu_masks'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'menu_options_article';
-  $strongarm->value = array();
-  $export['menu_options_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'menu_parent_article';
-  $strongarm->value = 'main-menu:0';
-  $export['menu_parent_article'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -1429,6 +1043,7 @@ within 24 hours.
   $strongarm->value = array(
     'bartik' => 'theme_status_messages',
     'seven' => 'theme_status_messages',
+    'multipurpose' => 'theme_status_messages',
   );
   $export['messages_alter_theme_altered'] = $strongarm;
 
@@ -1465,101 +1080,8 @@ within 24 hours.
   $strongarm->api_version = 1;
   $strongarm->name = 'module_filter_recent_modules';
   $strongarm->value = array(
-    'token' => 1459388324,
-    'captcha_after' => 1459454178,
-    'custom_add_another' => 1459405216,
-    'csm' => 1459706476,
-    'date' => 1459408174,
-    'date_views' => 1459408174,
-    'email_confirm' => 1459409040,
-    'emaillog' => 1459409040,
-    'entityreference' => 1459402760,
-    'entityreference_prepopulate' => 1459402760,
-    'entity_token' => 1459388324,
-    'eva' => 1459409079,
-    'extlink' => 1459408914,
-    'extlink_extra' => 1459408914,
-    'filter_perms' => 1459396778,
-    'errorlog' => 1459706501,
-    'views_ui' => 1459409131,
-    'user_stats' => 1459237182,
-    'remove_generator' => 1459706789,
-    'user_reference' => 1459707041,
-    'userprotect' => 1459233848,
-    'user_create_by_role' => 1459405683,
-    'taxonomy' => 1459234141,
-    'syslog' => 1459706936,
-    'strongarm' => 1459234183,
-    'shortcut' => 1459234275,
-    'simplify' => 1459234275,
-    'session_limit' => 1459235045,
-    'session_cookie_lifetime' => 1459706821,
-    'securelogin' => 1459706593,
-    'rss_permissions' => 1459235199,
-    'path' => 1459235258,
-    'references_dialog' => 1459402760,
-    'password_policy' => 1459235340,
-    'paranoia' => 1459708298,
-    'node_reference' => 1459400048,
-    'node_edit_protection' => 1459706750,
-    'maxlength' => 1459236040,
-    'maillog' => 1459236040,
-    'masked_input' => 1459706658,
-    'masquerade' => 1459236040,
-    'list' => 1459236141,
-    'login_security' => 1459706581,
-    'legal' => 1459236770,
-    'label_help' => 1459405319,
-    'image' => 1459236820,
-    'jquery_update' => 1459706476,
-    'help' => 1459236978,
-    'file_entity' => 1459237008,
-    'field_ui' => 1459237032,
-    'field_permissions' => 1459237043,
-    'tracker' => 1459707007,
-    'features' => 1459359813,
-    'auto_nodetitle' => 1459388267,
-    'features_16033018_baseline_setup' => 1459659281,
-    'overlay' => 1459408043,
-    'migrate' => 1459399009,
-    'migrate_ui' => 1459399004,
-    'migrate_example' => 1459398803,
-    'node_export' => 1459400022,
-    'node_export_features' => 1459400048,
-    'node_export_features_ui' => 1459400048,
-    'uuid' => 1459400006,
-    'uuid_path' => 1459400006,
-    'features_16033023_activity_code' => 1459642099,
-    'dashboard' => 1459407963,
-    'locale' => 1459408022,
-    'rdf' => 1459408057,
-    'search' => 1459408069,
-    'date_api' => 1459408174,
-    'views_content' => 1459409131,
-    'views_bulk_operations' => 1459707475,
-    'views_conditional' => 1459409131,
-    'views_contextual_filters_or' => 1459409131,
-    'views_exposed_groups' => 1459409131,
-    'views_field_view' => 1459409131,
-    'views_fields_combine' => 1459409131,
-    'views_show_query' => 1459409131,
-    'views_table_rowspan' => 1459409131,
-    'link' => 1459414009,
-    'features_informatics_tool' => 1459647514,
-    'features_16033104_funded_project' => 1459642099,
-    'features_activity_code' => 1459647490,
-    'features_funded_opportunity' => 1459647490,
-    'features_funded_project' => 1459647490,
-    'actions_permissions' => 1459707320,
-    'conditional_fields' => 1459707116,
-    'flood_unblock' => 1459707160,
-    'multistep' => 1459707172,
-    'static_field' => 1459707204,
-    'read_more' => 1459724908,
-    'variable' => 1459723787,
-    'features_basic_page' => 1459726619,
-    'features_rotator' => 1459726619,
-    'features_pages' => 1459729021,
+    'views_flipped_table' => 1459960308,
+    'views_flipped_table_accordion' => 1459960301,
   );
   $export['module_filter_recent_modules'] = $strongarm;
 
@@ -1630,61 +1152,8 @@ within 24 hours.
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'node_cron_last';
-  $strongarm->value = '1459725303';
+  $strongarm->value = '1459832672';
   $export['node_cron_last'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'node_export_reset_changed_article';
-  $strongarm->value = 0;
-  $export['node_export_reset_changed_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'node_export_reset_changed_page';
-  $strongarm->value = 0;
-  $export['node_export_reset_changed_page'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'node_options_article';
-  $strongarm->value = array(
-    0 => 'status',
-  );
-  $export['node_options_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'node_options_page';
-  $strongarm->value = array(
-    0 => 'status',
-  );
-  $export['node_options_page'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'node_preview_article';
-  $strongarm->value = '1';
-  $export['node_preview_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'node_submitted_article';
-  $strongarm->value = 0;
-  $export['node_submitted_article'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'node_submitted_page';
-  $strongarm->value = FALSE;
-  $export['node_submitted_page'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -1705,6 +1174,7 @@ within 24 hours.
   $strongarm->api_version = 1;
   $strongarm->name = 'path_alias_whitelist';
   $strongarm->value = array(
+    'informatics-tools' => TRUE,
     'node' => TRUE,
     'taxonomy' => TRUE,
   );
@@ -1737,90 +1207,6 @@ within 24 hours.
   $strongarm->name = 'rss_permissions_feed_icon_theme';
   $strongarm->value = 'theme_feed_icon';
   $export['rss_permissions_feed_icon_theme'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_all_forms';
-  $strongarm->value = 1;
-  $export['securelogin_all_forms'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_base_url';
-  $strongarm->value = '';
-  $export['securelogin_base_url'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_form_comment_form';
-  $strongarm->value = 1;
-  $export['securelogin_form_comment_form'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_form_node_form';
-  $strongarm->value = 1;
-  $export['securelogin_form_node_form'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_form_user_login';
-  $strongarm->value = 1;
-  $export['securelogin_form_user_login'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_form_user_login_block';
-  $strongarm->value = 1;
-  $export['securelogin_form_user_login_block'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_form_user_pass';
-  $strongarm->value = 1;
-  $export['securelogin_form_user_pass'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_form_user_pass_reset';
-  $strongarm->value = 1;
-  $export['securelogin_form_user_pass_reset'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_form_user_profile_form';
-  $strongarm->value = 1;
-  $export['securelogin_form_user_profile_form'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_form_user_register_form';
-  $strongarm->value = 1;
-  $export['securelogin_form_user_register_form'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_other_forms';
-  $strongarm->value = '';
-  $export['securelogin_other_forms'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'securelogin_secure_forms';
-  $strongarm->value = 1;
-  $export['securelogin_secure_forms'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -1972,67 +1358,8 @@ within 24 hours.
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'tfa_basic_cookie_domain';
-  $strongarm->value = '.nci-itcr.local';
-  $export['tfa_basic_cookie_domain'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'tfa_basic_help_text';
-  $strongarm->value = 'Contact support to reset your access.';
-  $export['tfa_basic_help_text'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'tfa_basic_roles_require';
-  $strongarm->value = array(
-    2 => 0,
-    3 => 0,
-    4 => 0,
-    5 => 0,
-  );
-  $export['tfa_basic_roles_require'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'tfa_enabled';
-  $strongarm->value = 1;
-  $export['tfa_enabled'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'tfa_fallback_plugins';
-  $strongarm->value = array(
-    -999 => 'tfa_basic_totp',
-    10 => 'tfa_basic_help',
-  );
-  $export['tfa_fallback_plugins'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'tfa_login_plugins';
-  $strongarm->value = array(
-    0 => 'tfa_basic_trusted_browser',
-  );
-  $export['tfa_login_plugins'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'tfa_validate_plugin';
-  $strongarm->value = 'tfa_basic_totp';
-  $export['tfa_validate_plugin'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'theme_default';
-  $strongarm->value = 'bartik';
+  $strongarm->value = 'multipurpose';
   $export['theme_default'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -2046,14 +1373,14 @@ within 24 hours.
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'update_last_check';
-  $strongarm->value = 1459747110;
+  $strongarm->value = 1460424863;
   $export['update_last_check'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'update_last_email_notification';
-  $strongarm->value = 1459439225;
+  $strongarm->value = 1460424855;
   $export['update_last_email_notification'] = $strongarm;
 
   $strongarm = new stdClass();

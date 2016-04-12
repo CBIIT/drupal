@@ -13,22 +13,6 @@ function features_baseline_setup_captcha_default_points() {
   $captcha = new stdClass();
   $captcha->disabled = FALSE; /* Edit this to true to make a default captcha disabled initially */
   $captcha->api_version = 1;
-  $captcha->form_id = 'comment_node_article_form';
-  $captcha->module = 'captcha';
-  $captcha->captcha_type = 'Math';
-  $export['comment_node_article_form'] = $captcha;
-
-  $captcha = new stdClass();
-  $captcha->disabled = FALSE; /* Edit this to true to make a default captcha disabled initially */
-  $captcha->api_version = 1;
-  $captcha->form_id = 'comment_node_page_form';
-  $captcha->module = 'captcha';
-  $captcha->captcha_type = 'Math';
-  $export['comment_node_page_form'] = $captcha;
-
-  $captcha = new stdClass();
-  $captcha->disabled = FALSE; /* Edit this to true to make a default captcha disabled initially */
-  $captcha->api_version = 1;
   $captcha->form_id = 'user_login';
   $captcha->module = 'captcha';
   $captcha->captcha_type = 'Math';
