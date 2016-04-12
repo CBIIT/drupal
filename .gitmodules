@@ -4,3 +4,9 @@
 [submodule "sites/nci-itcr"]
 	path = sites/nci-itcr
 	url = https://github.com/CBIIT/nci-itcr.git
+[submodule "sites/nci-emice"]
+	path = sites/nci-emice
+	url = git@github.com:CBIIT/nci-emice.git
+[submodule "sites/nci-itcr-old"]
+	path = sites/nci-itcr-old
+	url = git@github.com:CBIIT/nci-itcr.git
