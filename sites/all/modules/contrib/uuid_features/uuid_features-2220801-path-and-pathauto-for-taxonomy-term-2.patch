@@ -1,0 +1,43 @@
+diff --git a/includes/uuid_term.features.inc b/includes/uuid_term.features.inc
+index efe0b31..2a70168 100644
+--- a/includes/uuid_term.features.inc
++++ b/includes/uuid_term.features.inc
+@@ -111,6 +111,38 @@ function uuid_term_features_export_render($module = 'foo', $data) {
+     $first_term = reset($terms);
+     $export = clone $first_term;
+ 
++
++    //
++    // Add path and pathauto settings
++    //
++    if (!property_exists($export, 'path')) {
++      $export->path = array();
++    }
++
++    $uri = entity_uri('taxonomy_term', $export);
++    $path = drupal_get_path_alias($uri['path']);
++
++    if (module_exists('pathauto')) {
++      module_load_include('inc', 'pathauto');
++      $pathauto_alias = pathauto_create_alias(
++        'taxonomy_term',                    /* entity type */
++        'return',                           /* operation */
++        $uri['path'],                       /* source */
++        array('taxonomy_term' => $export),  /* data */
++        $export->vocabulary_machine_name    /* bundle */
++      );
++
++      if (!($path != $uri['path'] && $path == $pathauto_alias)) {
++        $export->path['pathauto'] = FALSE;
++        $export->path['alias'] = $path;
++      } else {
++        $export->path['pathauto'] = TRUE;
++      }
++    } else {
++      $export->path['alias'] = $path;
++    }
++
++
+     // Do not export ids.
+     unset($export->vid);
+     unset($export->tid);
