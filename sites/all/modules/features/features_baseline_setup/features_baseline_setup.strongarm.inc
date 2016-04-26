@@ -296,14 +296,14 @@ user/*/password';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'cron_key';
-  $strongarm->value = 'FERNBgeQ-whrgrszvGVPKHwUubvSm5irZfsz9VbqIiY';
+  $strongarm->value = 'iHWJXLgDj_iP-PXnkQbXqRz-DISCLuQgqpMmCbtSFKE';
   $export['cron_key'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'cron_last';
-  $strongarm->value = 1460435793;
+  $strongarm->value = 1461693952;
   $export['cron_last'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -981,10 +981,7 @@ user/*/password';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_expanded';
-  $strongarm->value = array(
-    0 => 'main-menu',
-    1 => 'navigation',
-  );
+  $strongarm->value = array();
   $export['menu_expanded'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -1021,18 +1018,17 @@ user/*/password';
     26 => 24,
     27 => 23,
     28 => 21,
-    29 => 20,
-    30 => 15,
-    31 => 14,
-    32 => 13,
-    33 => 12,
-    34 => 11,
-    35 => 7,
-    36 => 6,
-    37 => 5,
-    38 => 3,
-    39 => 2,
-    40 => 1,
+    29 => 15,
+    30 => 14,
+    31 => 13,
+    32 => 12,
+    33 => 11,
+    34 => 7,
+    35 => 6,
+    36 => 5,
+    37 => 3,
+    38 => 2,
+    39 => 1,
   );
   $export['menu_masks'] = $strongarm;
 
@@ -1079,10 +1075,7 @@ user/*/password';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'module_filter_recent_modules';
-  $strongarm->value = array(
-    'views_flipped_table' => 1459960308,
-    'views_flipped_table_accordion' => 1459960301,
-  );
+  $strongarm->value = array();
   $export['module_filter_recent_modules'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -1158,6 +1151,68 @@ user/*/password';
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'node_export_code';
+  $strongarm->value = 'all';
+  $export['node_export_code'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_export_existing';
+  $strongarm->value = 'revision';
+  $export['node_export_existing'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_export_filename';
+  $strongarm->value = 'node-export[node_export_filename:nid-list]([node_export_filename:node-count]-nodes).[node_export_filename:timestamp].[node_export_filename:format]';
+  $export['node_export_filename'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_export_file_assets_path';
+  $strongarm->value = '';
+  $export['node_export_file_assets_path'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_export_file_list';
+  $strongarm->value = '10';
+  $export['node_export_file_list'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_export_file_mode';
+  $strongarm->value = 'remote';
+  $export['node_export_file_mode'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_export_file_supported_fields';
+  $strongarm->value = 'file, image';
+  $export['node_export_file_supported_fields'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_export_format';
+  $strongarm->value = array(
+    'drupal' => 'drupal',
+    'json' => 0,
+    'serialize' => 0,
+    'xml' => 0,
+    'dsv' => 0,
+  );
+  $export['node_export_format'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'page_cache_maximum_age';
   $strongarm->value = '0';
   $export['page_cache_maximum_age'] = $strongarm;
@@ -1174,8 +1229,6 @@ user/*/password';
   $strongarm->api_version = 1;
   $strongarm->name = 'path_alias_whitelist';
   $strongarm->value = array(
-    'informatics-tools' => TRUE,
-    'node' => TRUE,
     'taxonomy' => TRUE,
   );
   $export['path_alias_whitelist'] = $strongarm;
@@ -1358,13 +1411,6 @@ user/*/password';
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'theme_default';
-  $strongarm->value = 'multipurpose';
-  $export['theme_default'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'tracker_index_nid';
   $strongarm->value = 23;
   $export['tracker_index_nid'] = $strongarm;
@@ -1373,7 +1419,7 @@ user/*/password';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'update_last_check';
-  $strongarm->value = 1460424863;
+  $strongarm->value = 1461693960;
   $export['update_last_check'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -1460,6 +1506,13 @@ user/*/password';
   $strongarm->name = 'user_cancel_method';
   $strongarm->value = 'user_cancel_block';
   $export['user_cancel_method'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'user_default_timezone';
+  $strongarm->value = '0';
+  $export['user_default_timezone'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
