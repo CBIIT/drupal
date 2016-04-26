@@ -518,6 +518,15 @@ function features_baseline_setup_user_default_permissions() {
     'module' => 'path',
   );
 
+  // Exported permission: 'administer user settings'.
+  $permissions['administer user settings'] = array(
+    'name' => 'administer user settings',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'user',
+  );
+
   // Exported permission: 'administer user stats'.
   $permissions['administer user stats'] = array(
     'name' => 'administer user stats',
