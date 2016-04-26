@@ -235,6 +235,15 @@ function uuid_node_features_rebuild_nodes($nodes, $module, $max_nesting = 5, $ne
       $node = node_submit($node);
       uuid_features_file_field_import($node, 'node', $module);
       entity_uuid_save('node', $node);
+
+      if (!empty($node->path)) {
+        $saved_node = entity_uuid_load('node', array($node->uuid));
+        $saved_node = reset($saved_node);
+        if (empty($saved_node->path['alias'])) {
+          $saved_node->path['alias'] = $node->path['alias'];
+          node_save($saved_node);
+        }
+      }
     }
     catch (Exception $e) {
       $second_run_nodes[] = $data;
