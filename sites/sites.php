@@ -56,11 +56,12 @@
 
 /* LOCAL */
 $sites['127.0.0.1']            = 'nci-nctn';
+$sites['nci-emice.local']      = 'nci-emice';
 $sites['nci-nctn.local']       = 'nci-nctn';
 $sites['nci-itcr.local']       = 'nci-itcr';
 
 /* AWS CI/QA */
-$sites['174.129.249.95']       = 'nci-nctn';
+$sites['174.129.249.95']       = 'nci-itcr';
 $sites['nci-nctn.qa']          = 'nci-nctn';
 $sites['nci-itcr.qa']          = 'nci-itcr';
 
