@@ -1,0 +1,39 @@
+***************
+*** 37,43 ****
+            });
+  
+            /* jQuery UI accordion call */
+-           $(displaySelector +':not(.ui-accordion)').accordion({
+                header: headerSelector,
+                animated: this.animated,
+                active: this.rowstartopen,
+--- 37,44 ----
+            });
+  
+            /* jQuery UI accordion call */
++           if($.isFunction($(displaySelector +':not(.ui-accordion)').accordion)) {
++             $(displaySelector +':not(.ui-accordion)').accordion({
+                header: headerSelector,
+                animated: this.animated,
+                active: this.rowstartopen,
+***************
+*** 47,55 ****
+                fillSpace: this.fillspace,
+                navigation: this.navigation,
+                clearstyle: this.clearstyle
+-           });
+          });
+        })(jQuery);
+      }
+    }
+- };--- 48,57 ----
+                fillSpace: this.fillspace,
+                navigation: this.navigation,
+                clearstyle: this.clearstyle
++             });
++           }
+          });
+        })(jQuery);
+      }
+    }
++ };
