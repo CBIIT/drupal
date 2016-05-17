@@ -23,13 +23,13 @@ class views_between_dates_filter_handler extends date_views_filter_handler_simpl
       // Re-using = and != operators to pass date_views_filter_handler_simple::value_validate tests
       // No reason to write new functions at this time.
       '=' => array(
-        'title' => t('Is within date range'),
+        'title' => t('Is active on the following date'),
         'method' => 'op_between_dates',
         'short' => t('between_dates'),
         'values' => 1,
       ),
       '!=' => array(
-        'title' => t('Is NOT within date range'),
+        'title' => t('Is NOT active on the following date'),
         'method' => 'op_between_dates',
         'short' => t('not_between_dates'),
         'values' => 1,
