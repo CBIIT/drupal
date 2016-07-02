@@ -1,0 +1,1447 @@
+<?php
+
+/**
+ * @file
+ * Glossary terms will be automatically marked with links to their descriptions.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function glossary_help($path, $args = array()) {
+  $output = '';
+
+  switch ($path) {
+    case 'admin/help#glossary':
+      return t('<p>Glossary helps newbies understand the jargon which always crops up when specialists talk about a topic. Doctors discuss CBC and EKG and CCs. Web developers keep talking about CSS, P2P, XSLT, etc. This is all intimidating for newbies.</p>
+      <p>The Glossary module scans posts for glossary terms in the body. If found, the glossary indicator is inserted after the term, or the term is turned into an indicator link depending on the settings. By hovering over the indicator, users may learn the definition of that term. Clicking leads the user to that term presented within the whole glossary.</p>
+      <p>Glossary terms are managed as vocabularies within the taxonomy.module. To get started with glossary, create a new vocabulary on the !taxonomy_admin page. The vocabulary need not be associated with any modules, although you can add detailed description to terms by attaching (story or other type of) nodes to them. Add a few terms to the vocabulary. The term title should be the glossary entry and the description should be its definition. You can make use of the hierarchy and related terms features. These features impact the display of the glossary when viewed in an overview.</p>
+      <p>Next, you have to set up the input formats with which you want to use the glossary. On the !input_formats page, select an input format to configure. Select the Glossary filter checkbox and press "Save configuration". Now proceed to the !glossary page and select the tab for the input format and select the vocabulary and other settings.</p>
+      <p>You can see how a vocabulary would function as a glossary by going to the !glossaries page and selecting the vocabulary to view.</p>
+      <p>Administration of glossary requires %permissions permissions.</p>', array(
+        '%permissions' => implode(', ', array(
+          t('administer taxonomy'),
+          t('access administration pages'),
+          t('administer filters'))
+        ),
+        '!taxonomy_admin' => l(t('administer >> content >> taxonomy'), 'admin/structure/taxonomy'),
+        '!input_formats' => l(t('administer >> site configuration >> input formats'), 'admin/config/content/formats'),
+        '!glossary' => l(t('administer >> site configuration >> glossary'), 'admin/config/content/glossary'),
+        '!glossaries' => l(t('glossaries'), 'glossary'),
+      ));
+
+    case 'admin/config/content/glossary':
+      return '<p><big>' . t('This page and its tabs allow you to control how the Glossary module functions.') . '</big></p>';
+
+    case 'admin/modules#description':
+      return t('Maintain one or more glossaries on your site.');
+
+    case 'glossary':
+      if (!$args[1]) {
+        if (user_access('administer filters')) {
+          return t('<a href="!url">Glossary settings page</a>', array('!url' => url('admin/config/content/glossary')));
+        }
+      }
+      break;
+
+    case 'glossary_search#noresults':
+      return t('<ul>
+      <li>Check if your spelling is correct.</li>
+      <li>Remove quotes around phrases to match each word individually: <em>"blue smurf"</em> will match less than <em>blue smurf</em>.</li>
+      <li>Consider loosening your query with <em>OR</em>: <em>blue smurf</em> will match less than <em>blue OR smurf</em>.</li>
+      </ul>');
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function glossary_menu() {
+  $items = array();
+
+  $items['glossary'] = array(
+    'title' => 'Glossary',
+    'page callback' => 'glossary_page',
+    'page arguments' => array(1, 2),
+    'access arguments' => array('access glossary'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+
+  $items['glossary/search'] = array(
+    'title' => 'Glossary Search',
+    'page callback' => 'glossary_search_results',
+    'page arguments' => array(2),
+    'access arguments' => array('access glossary'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['glossary/clearcache'] = array(
+    'title' => 'Glossary clear cache',
+    'page callback' => 'glossary_clearcache',
+    'access arguments' => array('administer filters'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/config/content/glossary'] = array(
+    'title' => 'Glossary Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('glossary_general_settings_form'),
+    'description' => 'Select how you want the Glossary module to behave.',
+    'access arguments' => array('administer filters'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'glossary.admin.inc',
+  );
+
+  $items['admin/config/content/glossary/general'] = array(
+    'title' => 'General',
+    'description' => 'General settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('glossary_general_settings_form'),
+    'access arguments' => array('administer filters'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -3,
+    'file' => 'glossary.admin.inc',
+  );
+
+  $items['admin/config/content/glossary/alphabet'] = array(
+    'title' => 'Alphabet',
+    'access arguments' => array('administer filters'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('glossary_alphabet_form'),
+    'description' => 'Alphabet settings.',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 0,
+    'file' => 'glossary.admin.inc',
+  );
+
+  $items['admin/config/content/glossary/clearcache'] = array(
+    'title' => 'Clear cache',
+    'access arguments' => array('administer filters'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('glossary_clearcache_form'),
+    'description' => 'Clear the filter cache.',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 0,
+    'file' => 'glossary.admin.inc',
+  );
+
+  $result = db_query('SELECT format, name FROM {filter_format}');
+  foreach ($result as $filter) {
+    $format = $filter->format;
+    $enabled = db_query("SELECT COUNT(*) FROM {filter} WHERE format = :format AND module = :module", array(':format' => $format, ':module' => 'glossary'))->fetchField();
+    if ($enabled || !variable_get('glossary_hide_menus', FALSE)) {
+      $name = $filter->name;
+      $items['admin/config/content/glossary/filter/' . $format] = array(
+        'title' => '!name',
+        'title arguments' => array('!name' => $name),
+        'access arguments' => array('administer filters'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('glossary_filter_form', 5),
+        'description' => 'Settings for the !name input format.', array('!name' => $name),
+        'weight' => 2,
+        'type' => MENU_LOCAL_TASK,
+        'file' => 'glossary.admin.inc',
+      );
+    }
+  }
+
+  $items['glossary/term/%'] = array(
+    'title' => 'Glossary',
+    'page callback' => 'glossary_term',
+    'page arguments' => array(2),
+    'access arguments' => array('access glossary'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function glossary_permission() {
+  return array(
+    'access glossary' => array(
+      'title' => t('access glossary'),
+      'description' => t("TODO Add a description for 'access glossary'"),
+    ),
+  );
+}
+
+/**
+ * Implements hook_init().
+ */
+function glossary_init() {
+  drupal_add_css(drupal_get_path('module', 'glossary') . '/glossary.css');
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function glossary_search_form($form, $form_state, $keys = NULL) {
+  $form['#action'] = url('glossary/search');
+  $form['#attributes'] = array('class' => 'glossary search-form');
+  $form['keys'] = array(
+    '#type' => 'textfield',
+    '#title' => '',
+    '#default_value' => $keys,
+    '#size' => 15,
+  );
+  $form['search'] = array(
+    '#type' => 'submit',
+    '#value' => t('Search'),
+  );
+  return $form;
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function glossary_search_form_submit($form, &$form_state) {
+  $keys = trim($form_state['values']['keys']);
+  $form_state['redirect'] = 'glossary/search/' . $keys;
+}
+
+/**
+ * Present the search results.
+ */
+function glossary_search_results($keys = NULL) {
+  $vids = _glossary_get_filter_vids();
+  $output = '<div class="glossary-list">';
+
+  $result = db_select('taxonomy_term_data', 't');
+  $result->addField('t', 'tid');
+  $result->condition('t.vid', $vids, 'IN')
+      ->condition(db_or()->condition('t.description', "%$keys%", 'LIKE')->condition('t.name', "%$keys%", 'LIKE'));
+  $result = $result->execute();
+
+  $found = NULL;
+  foreach ($result as $row) {
+    $term = taxonomy_term_load($row->tid);
+    $found .= '<dl>' . theme('glossary_overview_item', array(
+      'term' => $term,
+      'show_desc' => TRUE,
+      'dest' => NULL)
+    ) . '</dl>';
+  }
+
+  if (!$found) {
+    // @TODO: This returns a render array now.
+    $found = drupal_get_form('glossary_search_form', $keys) . '<p>' . t('Your search yielded no results') . glossary_help('glossary_search#noresults') . '</p>';
+    $found = drupal_render($found);
+  }
+
+  $output_title = t('Glossary search results');
+  $output .= '<div class="box"><h2 class="title">' . $output_title . '</h2><div class="content">' . $found . '</div></div>';
+  return $output . "</div>\n";
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function theme_glossary_search_form($variables) {
+  $form = $variables['0'];
+  return '<div class="container-inline">' . drupal_render_children($form) . '</div>';
+}
+
+/**
+ * Implements hook_theme().
+ */
+function glossary_theme() {
+  return array(
+    'glossary_search_form' => array(
+      'variables' => array('form'),
+    ),
+    'glossary_overview_item' => array(
+      'variables' => array('term', 'show_desc', 'destination'),
+    ),
+    'glossary_block_term' => array(
+      'variables' => array('term', 'link'),
+    ),
+  );
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function glossary_term($tid) {
+  $output = NULL;
+
+  $result = db_select('taxonomy_term_data', 't')
+      ->condition('tid', $tid)
+      ->addTag('term_access')
+      ->execute();
+  $output .= '<div class="glossary-list">' . "\n";
+  foreach ($result as $row) {
+    $term = taxonomy_term_load($row->tid);
+    drupal_set_title($term->name);
+    $output .= '<dl>' . theme('glossary_overview_item', array('term' => $term, 'show_desc' => TRUE)) . '</dl>';
+    $vid = $row->vid;
+  }
+  $output .= "</div>\n";
+
+  $tree = taxonomy_get_tree($vid);
+  $alphabar = _glossary_alphabar($vid, $tree);
+  $output = $alphabar . '<br/>' . $output;
+  return $output;
+}
+
+/**
+ * Provide filter tip text.
+ */
+function glossary_filter_glossary_tips($filter, $format, $long = FALSE) {
+  $block_tags = explode(' ', variable_get("glossary_blocking_tags_$format->format", 'abbr acronym'));
+  $standard_blocks = array('a');
+  foreach ($standard_blocks as $tag) {
+    if (!in_array($tag, $block_tags)) {
+      $block_tags[] = check_plain($tag);
+    }
+  }
+
+  foreach ($block_tags as $key => $tag) {
+    if ($tag[0] == '.') {
+      $block_tags[$key] = 'span class="' . check_plain(drupal_substr($tag, 1)) . '"';
+    }
+  }
+
+  sort($block_tags, SORT_STRING);
+  $blocked = implode(', ', $block_tags);
+  $more = ' ' . t('Additionally, these HTML elements will not be scanned: %blocked.', array('%blocked' => $blocked));
+
+  if ($long) {
+    return t('The Glossary module will automatically mark terms that have been defined in the glossary vocabulary with links to their descriptions. These marks depend on the settings and may be a superscript character or an icon, or the term may be turned into an acronym, cite, or abbreviation. If there are certain phrases or sections of text that should be excluded from glossary marking and linking, use the special markup, [no-glossary] ... [/no-glossary].') . $more;
+  }
+  else {
+    return t('Glossary terms will be automatically marked with links to their descriptions. If there are certain phrases or sections of text that should be excluded from glossary marking and linking, use the special markup, [no-glossary] ... [/no-glossary].') . $more;
+  }
+}
+
+/**
+ * Implements hook_filter_info().
+ */
+function glossary_filter_info() {
+  return array(
+    'glossary' => array(
+      'title' => t('Glossary filter'),
+      'description' => t('Maintain one or more glossaries on your site.'),
+      'process callback' => 'glossary_filter_glossary_process',
+      'tips callback' => 'glossary_filter_glossary_tips',
+    ),
+  );
+}
+
+/**
+ * Implements hook_taxonomy().
+ */
+function glossary_taxonomy($op, $type, $array = NULL) {
+  if ($array) {
+    _glossary_clear_cache($array['vid']);
+  }
+}
+
+/**
+ * Implements hook_user_XXX().
+ */
+function glossary_user_XXX($edit, $account) {
+  // Note: this requires a setting. Do we also need to clear cache if selected?
+  if (variable_get('glossary_disable_indicator', FALSE)) {
+    $form['content_glossary'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Glossary Indicators'),
+    );
+    $form['content_glossary']['glossary_disable_indicator'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Disable Glossary indicators'),
+      '#return_value' => 1,
+      '#default_value' => $user->glossary_disable_indicator,
+      '#description' => t('Check this box to disable the display of Glossary indicators.'),
+    );
+    return $form;
+  }
+}
+
+/**
+ * Implements hook_filter_FILTER_process().
+ */
+function glossary_filter_glossary_process($text, $filter, $format, $langcode, $cache, $cache_id) {
+  global $user;
+  $format = $format->format;
+
+  if (isset($user->glossary_disable_indicator) && $user->glossary_disable_indicator && variable_get('glossary_disable_indicator', FALSE)) {
+    return $text;
+  }
+
+  if (isset($_REQUEST['q']) && strcmp($_REQUEST['q'], 'fckeditor/xss') == 0) {
+    return $text;
+  }
+
+  $current_term = 0;
+  if (strcmp(arg(0), 'taxonomy') == 0 && strcmp(arg(1), 'term') == 0 && arg(2) > 0) {
+    $current_term = arg(2);
+  }
+
+  if (variable_get("glossary_vids_$format", 0)) {
+    $text = ' ' . $text . ' ';
+    $replace_mode = variable_get("glossary_replace_$format", 'superscript');
+    $link_style = variable_get("glossary_link_$format", 'normal');
+    $absolute_link = ($link_style == 'absolute');
+    $terms = _glossary_get_terms($format);
+    $vids = _glossary_get_filter_vids();
+    $terms_replace = array();
+    $tip_list = array();
+
+    foreach ($terms as $term) {
+      if ($current_term == $term->tid) {
+        continue;
+      }
+
+      $term_title = $term->description;
+      $fragment = NULL;
+      if ($term->nodes > 0) {
+        $linkto = taxonomy_term_path($term);
+      }
+      elseif (!empty($vids) && (variable_get('glossary_click_option', 0) == 1)) {
+        if (variable_get('glossary_hide_if_empty', 1) && empty($term_title)) {
+          continue;
+        }
+        if (variable_get('glossary_page_per_letter', FALSE)) {
+          $linkto = 'glossary/' . $term->vid . '/letter' . drupal_strtolower(drupal_substr($term->name, 0, 1));
+        }
+        else {
+          $linkto = 'glossary/' . $term->vid;
+        }
+        $fragment = 'term' . $term->tid;
+      }
+      else {
+        $linkto = 'glossary/term/' . $term->tid;
+      }
+      $ins_before = $ins_after = NULL;
+      $term_class = variable_get('glossary_term_class', 'glossary-term');
+
+      switch ($replace_mode) {
+        case 'superscript':
+          $ins_after = '<sup class="glossary-indicator" title="' . $term_title . '">';
+          if ($link_style == 'none') {
+            $ins_after .= variable_get("glossary_superscript_$format", 'i');
+          }
+          else {
+            $ins_after .= l(variable_get("glossary_superscript_$format", 'i'), $linkto, array(
+              'attributes' => array('title' => $term_title, 'class' => 'glossary-indicator'),
+              'fragment' => $fragment,
+              'absolute' => $absolute_link,
+            ));
+          }
+          $ins_after .= '</sup>';
+          break;
+
+        case 'abbr':
+          if ($link_style == 'none') {
+            $ins_before .= '<span class="' . $term_class . '" title="' . $term_title . '"><' . $replace_mode . ' title="' . $term_title . '">';
+            $ins_after .= '</' . $replace_mode . '></span>';
+          }
+          else {
+            $ins_before .= '<' . $replace_mode . ' title="' . $term_title . '"><a class="' . $term_class . '" href="' . url($linkto, array('fragment' => $fragment, 'absolute' => $absolute_link)) . '" title="' . $term_title . '">';
+            $ins_after .= '</a></' . $replace_mode . '>';
+          }
+          break;
+
+        // TODO: remove first case after a while.
+        case 'acronym link':
+          $replace_mode = 'acronym';
+
+        case 'acronym':
+        case 'cite':
+        case 'dfn':
+          if ($link_style == 'none') {
+            $ins_after .= '</' . $replace_mode . '>';
+          }
+          else {
+            $ins_before .= '<a class="glossary-term" href="' . url($linkto, array('fragment' => $fragment, 'absolute' => $absolute_link)) . '">';
+            $ins_after .= '</' . $replace_mode . '></a>';
+          }
+          $ins_before .= '<' . $replace_mode . ' title="' . $term_title . '">';
+          break;
+
+        case 'clicktip':
+        case 'hovertip':
+          if ($link_style == 'none') {
+            $ins_after .= '</span>';
+          }
+          else {
+            $ins_before = '<a class="' . $term_class . '" href="' .
+                url($linkto, array('fragment' => $fragment, 'absolute' => $absolute_link)) . '">';
+            $ins_after .= '</span></a>';
+          }
+          $ins_before .= "<span $replace_mode=$term->tid>";
+          if (!isset($tip_list[$term->tid])) {
+            $tip_list[$term->tid] = '<span class="' . $replace_mode . '" id="' . $term->tid . '">' . $term->image . $term_title . '</span>';
+          }
+          $ins_after .= $tip_list[$term->tid];
+          break;
+
+        case 'iconterm':
+          // Icon format, plus term link.
+          $img = '<img src="' . base_path() . variable_get("glossary_icon_$format", 'glossary.gif') . "\" />";
+          if ($link_style == 'none') {
+            $ins_after .= $img;
+          }
+          else {
+            $ins_before .= '<a class="glossary-term" href="' . url($linkto, array('fragment' => $fragment, 'absolute' => $absolute_link)) . '">';
+            $ins_after = $img . '</a>';
+          }
+          break;
+
+        default:
+          // Icon format.
+          $img = '<img src="' . base_path() . variable_get("glossary_icon_$format", 'glossary.gif') . "\" />";
+          if ($link_style == 'none') {
+            $ins_after .= $img;
+          }
+          else {
+            $ins_after = l($img, $linkto, array(
+              'attributes' => array('title' => $term_title, 'class' => 'glossary-icon'),
+              'fragment' => $fragment,
+              'absolute' => $absolute_link,
+              'html' => TRUE,
+            ));
+          }
+          break;
+      }
+
+      // Replace term with the desired new HTML code.
+      $terms_replace[] = array(
+        'ins_before' => $ins_before,
+        'ins_after' => $ins_after,
+      );
+    }
+    return _glossary_insertlink($format, $text, $terms_replace);
+  }
+  $msg = 'returning <pre>' . $text . '</pre>';
+  drupal_set_message(check_plain($msg));
+  return $text;
+}
+
+/**
+ * Insert glossary links to $text after every matching $terms[i]['synonyms'] that is not inside a blocking tag.
+ * $terms[i]['ins_before'] is prepended to the matches, $terms[i]['ins_after'] is appended to them.
+ * Match type and replace mode all depend on user settings.
+ * The text is scanned once for all blocking tags and matches, then those 'events' are sorted and handled one by one.
+ */
+function _glossary_insertlink($format, &$text, &$terms) {
+  $multibyte_enabled = extension_loaded('mbstring');
+  if ($multibyte_enabled) {
+    $mb_prefix = 'mb_';
+  }
+  else {
+    $mb_prefix = NULL;
+  }
+  $case_sensitive = variable_get("glossary_case_$format", '1');
+  $findfunc = $mb_prefix . 'strpos';
+  $findtagfunc = $mb_prefix . 'strpos';
+
+  $replaceall = variable_get("glossary_replace_all_$format", 0);
+
+  $events = array();
+
+  // Find blocking tags.
+  $open_tags = array('[no-glossary]', '<', '<a ', '[code');
+  $close_tags = array('[/no-glossary]', '>', '</a>', '[/code]');
+  // Use these always/when Codefilter module is on?.
+  // array('< ?php ', '[?php ', '<% ', '[% ', '[codefilter_');
+  // array('?'.'>', '?]', '%'.'>', '%]', '[/codefilter_');
+  $user_tags = explode(' ', variable_get("glossary_blocking_tags_$format", 'abbr acronym'));
+  foreach ($user_tags as $tag) {
+    if (!empty($tag)) {
+      if (ctype_alnum($tag)) {
+        $open_tags[] = "<$tag";
+        $close_tags[] = "</$tag>";
+      }
+      elseif ($tag[0] == '.') {
+        $open_tags[] = '<span class="' . drupal_substr($tag, 1);
+        $close_tags[] = "</span>";
+      }
+    }
+  }
+
+  $searchtext = $case_sensitive ? $text : drupal_strtolower($text);
+
+  foreach ($open_tags as $i => $tag) {
+    $offset = 0;
+    while (($offset = $findtagfunc($searchtext, $tag, $offset)) !== FALSE) {
+      // Longer tags will override shorter '<' on the same offset.
+      $events[$offset] = array(
+        'type' => 'open',
+        'which' => $i,
+      );
+      $offset += drupal_strlen($tag);
+    }
+  }
+
+  // Find match candidates.
+  // @TODO: We don't have synonyms any more.
+  foreach ($terms as $i => $term) {
+    foreach ($term['synonyms'] as $synonym) {
+      if (!$case_sensitive) {
+        $synonym = drupal_strtolower($synonym);
+      }
+      $offset = 0;
+      $first_match_found = FALSE;
+      while (($offset = $findfunc($searchtext, $synonym, $offset)) !== FALSE) {
+        $len = drupal_strlen($synonym);
+        $match = drupal_substr($text, $offset, $len);
+        // Only longer matches override shorter ones.
+        if (!isset($events[$offset]) || drupal_strlen($events[$offset]['match']) < drupal_strlen($match)) {
+          // Get synonym with case as in text.
+          $events[$offset] = array(
+            'type' => 'match',
+            'which' => $i,
+            'match' => $match,
+          );
+          if (!$replaceall) {
+            $first_match_found = TRUE;
+            break;
+          }
+        }
+        $offset += $len;
+      }
+      // TODO: remove this if we want different synonyms of the same term to
+      // be matched independently as 'first matches'.
+      if ($first_match_found && !$replaceall) {
+        break;
+      }
+    }
+  }
+
+  ksort($events);
+
+  $newtext = '';
+  // Text was parsed from chars 0 to $parsed (exclusive).
+  $parsed = 0;
+
+  foreach ($events as $place => $event) {
+    // Skip events inside blocking tag (they're already copied as is).
+    if ($place < $parsed) {
+      continue;
+    }
+    // Copy plain text (with no events).
+    $newtext .= drupal_substr($text, $parsed, ($place - $parsed));
+    $parsed = $place;
+    // If a blocking tag is opened, skip to closing tag.
+    if ($event['type'] == 'open') {
+      $skip = $findtagfunc($text, $close_tags[$event['which']], $place);
+      if ($skip === FALSE) {
+        $skip = drupal_strlen($text);
+      }
+      // If the tag is [no-glossary] - remove it with the closing tag
+      // (by incrementing $parsed without copying).
+      if ($event['which'] == 0) {
+        $parsed += drupal_strlen($open_tags[$event['which']]);
+        $newtext .= drupal_substr($text, $parsed, ($skip - $parsed));
+        $parsed = $skip + drupal_strlen($close_tags[$event['which']]);
+      }
+      // Copy text without changing it.
+      else {
+        $newtext .= drupal_substr($text, $parsed, ($skip - $parsed));
+        $parsed = $skip;
+      }
+    }
+    if ($event['type'] == 'match') {
+      $matchlen = drupal_strlen($event['match']);
+      $proper_match = FALSE;
+      switch (variable_get("glossary_match_$format", 'b')) {
+        // Require word break left or right.
+        case 'lr':
+          // $proper_match = (_glossary_is_boundary($text {$next - 1}) ||
+          // _glossary_is_boundary($text {$next + $matchlen}));
+          $proper_match = (_glossary_is_boundary(drupal_substr($text, $place - 1, 1)) ||
+              _glossary_is_boundary(drupal_substr($text, $place + $matchlen, 1)));
+          break;
+
+        // Require word break left and right.
+        case 'b':
+          // $proper_match = (_glossary_is_boundary($text {$next - 1})
+          // && _glossary_is_boundary($text {$next + $matchlen}));
+          $proper_match = (_glossary_is_boundary(drupal_substr($text, $place - 1, 1)) &&
+              _glossary_is_boundary(drupal_substr($text, $place + $matchlen, 1)));
+          break;
+
+        // Require word break left.
+        case 'l':
+          // $proper_match = _glossary_is_boundary($text {$next - 1});
+          $proper_match = _glossary_is_boundary(drupal_substr($text, $place - 1, 1));
+          break;
+
+        // Require word break right.
+        case 'r':
+          // $proper_match = _glossary_is_boundary($text {$next + $matchlen});
+          $proper_match = _glossary_is_boundary(drupal_substr($text, $place + $matchlen, 1));
+          break;
+
+        // Match any substring.
+        case 's':
+        default:
+          $proper_match = TRUE;
+          break;
+      }
+      if ($proper_match) {
+        $newtext .= $terms[$event['which']]['ins_before'] . $event['match'] . $terms[$event['which']]['ins_after'];
+        $parsed += $matchlen;
+      }
+    }
+  }
+
+  // Append remaining part.
+  return $newtext . drupal_substr($text, $parsed);
+}
+
+/**
+ * Main glossary page function.
+ */
+function glossary_page($vid = NULL, $letter = NULL) {
+  $vids = _glossary_get_filter_vids();
+  $found = FALSE;
+
+  if ($vid) {
+    $found = array_search($vid, $vids);
+  }
+  else {
+    if (count($vids) == 1) {
+      $vid = $vids[0];
+      $found = TRUE;
+    }
+  }
+
+  $breadcrumb = array(l(t('Home'), NULL));
+  if (!$vid || $found === FALSE) {
+    drupal_set_title(t('Glossaries'));
+    drupal_set_breadcrumb($breadcrumb);
+    return _glossary_list();
+  }
+  else {
+    $voc = taxonomy_vocabulary_load($vid);
+    if (count($vids) > 1) {
+      $breadcrumb[] = l(t('Glossaries'), 'glossary');
+    }
+    drupal_set_title(filter_xss_admin($voc->name));
+    drupal_set_breadcrumb($breadcrumb);
+    return glossary_overview($voc, $letter);
+  }
+}
+
+function _glossary_alphabar($vid, &$tree) {
+  $output = NULL;
+  $page_per_letter = variable_get('glossary_page_per_letter', FALSE);
+
+  if (variable_get('glossary_suppress_unused', FALSE)) {
+    // Just make it empty; it will be filled in below.
+    $letters = array();
+  }
+  else {
+    $lets = array_merge(variable_get('glossary_alphabet', range('a', 'z')), variable_get('glossary_digits', range('0', '9')));
+    $letters = drupal_map_assoc($lets);
+  }
+
+  foreach ($tree as $key => $term) {
+    $term->let = drupal_strtolower(drupal_substr($term->name, 0, 1));
+    if ($page_per_letter) {
+      $letters[$term->let] = l($term->let, 'glossary/' . $vid . '/letter' . $term->let, array('attributes' => array('class' => array('glossary-item'))));
+    }
+    else {
+      $letters[$term->let] = l($term->let, 'glossary/' . $vid, array('fragment' => 'letter' . $term->let, 'attributes' => array('class' => array('glossary-item'))));
+    }
+  }
+  $sep = ' ' . variable_get('glossary_alphabar_separator', '|') . ' ';
+  $output .= '<div class="glossary-links">' . implode($sep, $letters);
+
+  $output .= '<div class="glossary-alphabar-instructions">';
+  $output .= filter_xss(variable_get('glossary_alphabar_instruction', _alphabar_instruction_default()));
+  $output .= "</div></div>\n";
+
+  return $output;
+}
+
+/**
+ * Produce the Glossary overview.
+ */
+function glossary_overview($vocab, $letter = NULL) {
+  $dest = drupal_get_destination();
+  $output = '<div id="' . drupal_clean_css_identifier(drupal_strtolower($vocab->name)) . '">';
+
+  if ($vocab->description) {
+    $output .= '<p class="glossary-description">' . filter_xss_admin($vocab->description) . '</p>';
+  }
+
+  $vid = $vocab->vid;
+  if ($letter) {
+    $letter = drupal_substr($letter, 6, 1, 'UTF-8');
+    drupal_set_title(t('Glossary beginning with @let', array('@let' => drupal_strtoupper($letter))));
+  }
+  $current_let = '';
+
+  $no_overview = (variable_get('glossary_click_option', 0) == 0) && (variable_get('glossary_page_per_letter', FALSE) == TRUE);
+
+  $show_desc = variable_get('glossary_show_description', FALSE);
+  $separate = variable_get('glossary_separate_letters', FALSE);
+  $tree = taxonomy_get_tree($vid);
+
+  $output .= _glossary_alphabar($vid, $tree);
+
+  $output .= '<div class="glossary-list"><dl>' . "\n";
+
+  if ($tree) {
+    foreach ($tree as $term) {
+      // See if it's a new section.
+      // If we're looking for a single letter, see if this is it.
+      if ((!$no_overview && !$letter) || $term->let == $letter) {
+        // See if it's a new section.
+        if ($term->let != $current_let) {
+          $output .= "\n" . '<a id="letter' . $term->let . '"></a>';
+          if ($separate) {
+            $output .= '<div class="glossary-letter">' . $term->let . '</div>';
+          }
+          $current_let = $term->let;
+        }
+        $output .= theme('glossary_overview_item', array(
+          'term' => $term,
+          'show_desc' => $show_desc,
+          'dest' => $dest)
+        );
+      }
+    }
+    if ($current_let != '') {
+      $output .= '</dl>';
+    }
+  }
+  $output .= '</dl></div></div>';
+  return glossary_admin_links($vocab, $dest) . $output;
+}
+
+/**
+ * Theme a glossary overview item.
+ */
+function theme_glossary_overview_item($variables) {
+  $output = NULL;
+  $term = $variables['term'];
+  $show_desc = $variables['show_desc'];
+  $destination = $variables['dest'];
+  global $base_url;
+  static $click_option, $link_related, $show_detailed, $one_way, $tax_img_avail, $access_tax, $access_search, $show_edit, $show_search, $format;
+  if (!isset($click_option)) {
+    $click_option = variable_get('glossary_click_option', 0);
+    $link_related = variable_get('glossary_link_related', TRUE);
+    $show_detailed = variable_get('glossary_show_detailed', FALSE);
+    $show_edit = variable_get('glossary_show_edit', TRUE);
+    $show_search = variable_get('glossary_show_search', TRUE);
+    $one_way = variable_get('glossary_link_related_how', FALSE);
+    $tax_img_avail = module_exists('taxonomy_image');
+    $access_tax = user_access('administer taxonomy');
+    $access_search = user_access('search content');
+    $format = variable_get('glossary_default_filter', filter_default_format());
+  }
+
+  if ($tax_img_avail && $show_desc) {
+    $img = taxonomy_image_display($term->tid);
+    if ($img) {
+      $obj = taxonomy_image_get_object($term->tid);
+      $img = '<a href="' . $obj->url . '">' . $img . '</a>';
+    }
+  }
+  else {
+    $img = NULL;
+  }
+
+  if (!isset($term->depth)) {
+    $term->depth = 0;
+  }
+
+  $output .= '<dt class="depth' . $term->depth . '">' . $img;
+  $output .= '<a id="term' . $term->tid . '"></a>';
+
+  if ($show_desc) {
+    $output .= str_repeat("&mdash;", $term->depth) . filter_xss_admin($term->name);
+  }
+  else {
+    $output .= l($term->name, 'glossary/term/' . $term->tid) . ' ';
+  }
+
+  if ($show_edit && $access_tax) {
+    $output .= ' ' . l(t('edit term'), "taxonomy/term/$term->tid/edit", array(
+      'attributes' => array(
+        'class' => 'glossary-edit-term',
+        'title' => t('edit this term and definition'),
+      ),
+      'query' => $destination,
+      )
+    );
+  }
+
+  if ($show_search && $access_search) {
+    $output .= l(t('search for term'), 'search/node/"' . $term->name . '"', array('attributes' => array('class' => 'glossary-search-term', 'title' => t('search for content using this term')))
+    );
+  }
+  $output .= '</dt><dd class="depth' . $term->depth . '">';
+
+  if ($show_desc) {
+    if ($term->description) {
+      $output .= '<span class="glossary-term-description">'
+          . check_markup($term->description, $format)
+          . '</span>';
+    }
+    /*
+    if ($relations = glossary_get_related($term->tid, 'name', $one_way)) {
+    $output .= '<span class="glossary-related">' . t('See also') . ': ';
+    foreach ($relations as $related) {
+    $related->name = filter_xss($related->name);
+    if ($link_related) {
+    if ($click_option == 1) {
+    $items[] .= l($related->name, "glossary/$term->vid",
+    array('fragment' => "term$related->tid"));
+    }
+    else {
+    $items[] .= l($related->name, "glossary/term/$related->tid");
+    }
+    }
+    else {
+    $items[] .= check_plain($related->name);
+    }
+    }
+    $output .= implode(', ', $items) . "</span>\n";
+    unset($items);
+    }
+     */
+
+    // TODO Please convert this statement to the D7 database API syntax.
+    $detailed_exists = FALSE;
+    // $detailed_exists = db_query(db_rewrite_sql('SELECT COUNT(t.nid)
+    // FROM {taxonomy_term_node} t
+    // JOIN {node} n USING (nid)
+    // WHERE t.tid=%d AND n.status=1'), $term->tid)->fetchField();
+    if ($detailed_exists) {
+      // Do we want to show the teasers?
+      if ($show_detailed) {
+        $output .= '<div class="glossary-detailed">';
+        $text = NULL;
+        // TODO Please convert this statement to the D7 database API syntax.
+        /* There is not taxo_term_node any more. */
+        // $detailed = db_query(db_rewrite_sql('SELECT t.nid FROM
+        // {taxonomy_term_node} t JOIN {node} n USING (nid) WHERE t.tid=%d AND
+        // n.status=1'), $term->tid);
+        $detailed = db_query('taxonomy_index', 'ti')
+            ->innerJoin('node', 'n', 'n.nid = ti.nid');
+        $detailed->condition('t.tid', $term->tid)
+            ->condition('n.status', 1)
+            ->addTag('node_access')
+            ->addTag('term_access')
+            ->execute();
+        foreach ($detailed as $row) {
+          $node = node_load($row->nid);
+          // Format as teaser view with links.
+          $text .= node_view($node, TRUE, FALSE, TRUE);
+        }
+        if ($text) {
+          $fieldset = array(
+            '#title' => t('Detailed definition of @term', array('@term' => $term->name)),
+            '#collapsible' => TRUE,
+            '#collapsed' => TRUE,
+            '#value' => $text,
+          );
+          $output .= theme('fieldset', $fieldset);
+        }
+        $output .= "</div>\n";
+      }
+      else {
+        $output .= '<div class="glossary-detailed-link">' .
+            l(t('Detailed definition of @term', array('@term' => $term->name)), taxonomy_term_path($term))
+            . '</div>';
+      }
+    }
+  }
+  return $output;
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function theme_glossary_block_term($variables) {
+  $term = $variables['0'];
+  $link = $variables['1'];
+  global $base_url;
+  static $click_option, $link_related, $one_way, $tax_img_avail;
+  if (!isset($click_option)) {
+    $click_option = variable_get('glossary_click_option', 0);
+    $link_related = variable_get('glossary_link_related', TRUE);
+    $one_way = variable_get('glossary_link_related_how', FALSE);
+    $tax_img_avail = module_exists('taxonomy_image');
+  }
+
+  if ($tax_img_avail) {
+    $img = taxonomy_image_display($term->tid);
+    if ($img) {
+      $obj = taxonomy_image_get_object($term->tid);
+      $img = '<a href="' . $obj->url . '">' . $img . '</a>';
+    }
+  }
+  else {
+    $img = NULL;
+  }
+
+  $output .= '<div class="glossary-block-term-name">';
+  $output .= $link ? l($term->name, 'glossary/term/' . $term->tid) : check_plain($term->name);
+  $output .= "</div>\n";
+
+  $output .= '<div class="glossary-block-term-description">';
+  $output .= $term->description ? check_markup($term->description) : NULL;
+  $output .= "</div>\n";
+
+  if ($relations = glossary_get_related($term->tid, 'name', $one_way)) {
+    $output .= '<span class="glossary-related">' . t('See also') . ': ';
+    $items = array();
+    foreach ($relations as $related) {
+      if ($link_related) {
+        if ($click_option == 1) {
+          $items[] .= l($related->name, 'glossary/' . $term->vid, array('fragment' => 'term' . $related->tid));
+        }
+        else {
+          $items[] .= l($related->name, 'glossary/term/' . $related->tid);
+        }
+      }
+      else {
+        $items[] .= check_plain($related->name);
+      }
+    }
+    $output .= implode(', ', $items) . "</span>\n";
+  }
+
+  return $output;
+}
+
+/**
+ * Create Admin links for the overview.
+ */
+function glossary_admin_links($vocabulary, $destination) {
+  $output = '<div class="glossary-admin-links">';
+  $links = array();
+  if (user_access('administer taxonomy')) {
+    $links['glossary_add_term'] = array(
+      'title' => t('Add term'),
+      'href' => 'admin/structure/taxonomy/' . $vocabulary->vid . '/add/term',
+    );
+    $n = drupal_strtolower($vocabulary->name);
+    $links['glossary_edit'] = array(
+      'title' => t('Edit @name', array('@name' => $n)),
+      // Is this secure?.
+      'href' => "admin/structure/taxonomy/$n/edit",
+      'query' => $destination,
+    );
+  }
+  if (user_access('administer filters')) {
+    $links['glossary_admin'] = array(
+      'title' => t('Glossary settings'),
+      'href' => 'admin/config/content/glossary',
+      'query' => $destination,
+    );
+  }
+
+  if (!empty($links)) {
+    $output .= theme('links', array('links' => $links, 'attributes' => array('class' => array('inline'))));
+  }
+  return $output . '</div>';
+}
+
+function _glossary_list() {
+  $output = "";
+  $destination = drupal_get_destination();
+  $vids = _glossary_get_filter_vids();
+  $vocs = array();
+  foreach ($vids as $vid) {
+    $voc = taxonomy_vocabulary_load($vid);
+    $vocs[$voc->name] = $voc;
+  }
+  uksort($vocs, '_glossary_cmp_strcase');
+
+  $eo = array('even', 'odd');
+  $i = 0;
+  $output .= '<table><tr><th>'
+      . t("Glossary name")
+      . '</th><th>'
+      . t('Operations')
+      . '</th></tr>';
+
+  foreach ($vocs as $voc) {
+    $links = array();
+    $class = $eo[++$i & 1];
+    if (user_access('administer taxonomy')) {
+      $links['glossary_edit'] = array(
+        'title' => t('Edit'),
+        'href' => 'admin/structure/taxonomy/edit/vocabulary/' . $voc->vid,
+        'query' => $destination,
+      );
+    }
+    $links['glossary_view'] = array(
+      'title' => t('List'),
+      'href' => 'glossary/' . $voc->vid,
+    );
+
+    if ($voc->description) {
+      $output .= '<tr class="' . $class . ' merge-down"><th>'
+          . filter_xss($voc->name)
+          // . check_plain($voc->name)
+          . '</th><td>'
+          . theme('links', array('links' => $links)) . '</td></tr>';
+      $output .= '<tr class="' . $class . ' merge-up"><td colspan="2" class="glossary-list-description">' . filter_xss($voc->description) . '</td></tr>';
+    }
+    else {
+      $output .= '<tr class="' . $class . '">';
+      $output .= '<th>'
+          . filter_xss($voc->name)
+          // . check_plain($voc->name)
+          . '</th><td>'
+          . theme('links', array('links' => $links))
+          . '</td></tr>';
+    }
+  }
+
+  // Were there any rows produced?.
+  if ($i == 0) {
+    $output .= '<tr><td colspan="5">' . t('No applicable vocabularies were found, please check your settings.') . '</td></tr>';
+  }
+  $output .= '</table>';
+
+  return $output;
+}
+
+function db_rewrite_sql($text) {
+  $where = debug_backtrace();
+  drupal_set_message(t('Function "@func" called on line @line of @file.', array(
+    '@func' => $where[0]['function'],
+    '@line' => $where[0]['line'],
+    '@file' => $where[0]['file'],
+      )), 'warning');
+  return $text;
+}
+
+/**
+ * Get taxonomy terms.
+ */
+function _glossary_get_terms($format) {
+  static $got = array();
+  $show_all = variable_get('glossary_allow_no_description', FALSE);
+  $taxonomy_image_enabled = module_exists('taxonomy_image');
+
+  if (!isset($got[$format])) {
+    $got[$format] = array();
+  }
+
+  if (!$terms = $got[$format]) {
+    $terms = array();
+    $vids = variable_get("glossary_vids_$format", 0);
+
+    foreach ($vids as $vid) {
+      // Get all glossary terms.
+      // Omit terms without a description. those are usually container terms.
+      // If multilingual taxonomy is enabled only show terms in current or no
+      // language.
+      $result = db_select('taxonomy_term_data', 'td');
+      // $result->leftJoin('taxonomy_index', 'ti');
+      $result->join('taxonomy_index', 'ti');
+
+      $result->fields('td', array('tid', 'name'))
+          ->addExpression('COUNT(ti.nid)', 'nodes');
+      $result->condition('td.vid', $vid)
+          ->groupBy('td.tid')
+          ->groupBy('td.name')
+          ->groupBy('td.description')
+          ->orderBy('LENGTH(td.name)', 'DESC');
+      if (module_exists('i18ntaxonomy')) {
+        global $language;
+        $result->condition('td.language', array('', $language->language), 'IN');
+      }
+
+      // $result->addTag('term_access');
+      $result->execute();
+      foreach ($result as $term) {
+        if ($term->nodes) {
+          // If there were any nodes attached, we need to
+          // see if they were unpublished.
+          // TODO Please convert this statement to the D7 database API syntax.
+          $unpubs = db_query(db_rewrite_sql("SELECT COUNT(n.nid) FROM {taxonomy_term_node} tn JOIN {node} n USING (nid) WHERE tn.tid=%d AND n.status=0"), $term->tid)->fetchField();
+          $term->nodes -= $unpubs;
+        }
+
+        if ($term->description || $show_all) {
+          $term->vid = $vid;
+          $terms[] = $term;
+        }
+        if ($taxonomy_image_enabled) {
+          $term->image = taxonomy_image_display($term->tid);
+        }
+        else {
+          $term->image = NULL;
+        }
+      }
+    }
+    $got[$format] = $terms;
+  }
+
+  return $terms;
+}
+
+/**
+ * Find all term objects related to a given term ID Adapted frm taxonomy.module.
+ *
+ * @param int $tid
+ *   the term id to look up.
+ * @param bool $one_way
+ *   whether to do one-way or two-way relations.
+ * 
+ * @return array
+ *   an array related-tid => related-name
+ */
+function glossary_get_related($tid, $key = 'tid', $one_way = FALSE) {
+  // D7 doesn't really support relationships.
+  return array();
+
+  if ($tid) {
+    $related = array();
+    $qargs = array_fill(0, 3, $tid);
+
+    if ($one_way) {
+      $result = db_query('SELECT r.tid2 FROM {taxonomy_term_relation} r WHERE r.tid1 = :r.tid1 ORDER BY r.tid2', array(':r.tid1' => $qargs));
+      foreach ($result as $term) {
+        // Hope that taxonomy has this cached to save a query.
+        $rel = taxonomy_term_load($term->tid2);
+        $related[$rel->$key] = $rel;
+      }
+    }
+    else {
+      // Two-way (normal taxonomy function).
+      // $result = db_query('SELECT t.*, tid1, tid2 FROM {taxonomy_term_relation
+      // }, {taxonomy_term_data} t WHERE (t.tid = :(t.tid OR t.tid = :t.tid AND
+      // (tid1 = :(tid1 OR tid2 = :tid2)AND t.tid != :t.tid ORDER BY weight,
+      // name', array(':(t.tid' => 'tid1', ':t.tid' => 'tid2', ':(tid1' =>
+      // $qargs)); 
+      // foreach ($result as $term) {
+      // $related[$term->$key] = $term;
+      // }
+    }
+
+    return $related;
+  }
+  else {
+    return array();
+  }
+}
+
+function _glossary_is_boundary($char) {
+  if (extension_loaded('mbstring')) {
+    return (mb_strpos("!\"#\$%&'()*+,-./:;<=>?@[\]^_`{|}~� ��������� \t\n\r", $char) !== FALSE);
+  }
+  else {
+    return (strpos("!\"#\$%&'()*+,-./:;<=>?@[\]^_`{|}~� ��������� \t\n\r", $char) !== FALSE);
+  }
+}
+
+/**
+ * Menu call back for link on settings page.
+ */
+function glossary_clearcache() {
+  cache_clear_all('*', 'cache_filter', TRUE);
+  drupal_set_message(t('Cache_filter cleared.'));
+  drupal_goto('/glossary');
+}
+
+function _glossary_clear_cache($format = NULL) {
+  // We could throw fewer things away if we checked which filter formats
+  // used the glossary filter, and we only threw those away. In practice,
+  // most if not all formats would use the glossary filter, so we just
+  // get rid of them all.
+  if (!is_array($format)) {
+    $wildcard = $format . ':';
+  }
+  if(empty($wildcard)) {
+    $wildcard = '*';
+  }
+  cache_clear_all($wildcard, 'cache_filter', TRUE);
+  drupal_set_message(t('The filter cache has been cleared. There may be a temporary performance degradation while it is rebuilt.'));
+}
+
+/**
+ * Get an array of all vocabulary IDs associated with Glossary.
+ *
+ * @return array
+ *   An array of vids.
+ */
+function _glossary_get_filter_vids() {
+  // We can't use filter_formats() here, because we need all input formats,
+  // not just those we are allowed to post in.
+  $vids = array();
+  $result = db_query("SELECT format FROM {filter_format}");
+  foreach ($result as $format) {
+    $filters = filter_list_format($format->format);
+    foreach ($filters as $filter) {
+      if ($filter->module == "glossary") {
+        $vids = array_merge($vids, variable_get("glossary_vids_" . $format->format, array()));
+      }
+    }
+  }
+  return array_unique($vids);
+}
+
+function _glossary_cmp_strcase($a, $b) {
+  return strcmp(drupal_strtolower($a), drupal_strtolower($b));
+}
+
+function _alphabar_instruction_default() {
+  if (variable_get('glossary_page_per_letter', FALSE)) {
+    return t('Click one of the letters above to be taken to a page of all terms beginning with that letter.');
+  }
+  else {
+    return t('Click one of the letters above to advance the page to terms beginning with that letter.');
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function glossary_block_info() {
+  // TODO Rename block deltas (e.g. glossary-search) to readable strings.
+  $blocks['glossary-search']['info'] = t('Glossary: Search');
+  $blocks['glossary-random']['info'] = t('Glossary: Random');
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function glossary_block_view($delta) {
+  // TODO Rename block deltas (e.g. glossary-search) to readable strings.
+  switch ($delta) {
+    case 'glossary-search':
+      $blocks['subject'] = t('Search Glossary');
+      $blocks['content'] = drupal_get_form('glossary_search_form');
+      return $blocks;
+
+    case 'glossary-random':
+      $interval = variable_get("glossary_block_{$delta}_interval", 0) * variable_get("glossary_block_{$delta}_step", 0);
+      $last = variable_get("glossary_block_{$delta}_last", 0);
+      if ($last + $interval < REQUEST_TIME) {
+        // Time to get a new selection.
+        $saved_vids = variable_get("glossary_block_{$delta}_vids", NULL);
+        if (is_null($saved_vids)) {
+          $blocks['content'] = t('Glossary block !blk has not been configured.', array('!blk' => $delta));
+          return $blocks;
+        }
+        $vids = array_filter($saved_vids);
+        if (count($vids) == 0) {
+          $vids = _glossary_get_filter_vids();
+        }
+        $placeholders = implode(',', array_fill(0, count($vids), '%d'));
+        // TODO Please convert this statement to the D7 database API syntax.
+        $tid = db_query_range('SELECT tid FROM {taxonomy_term_data} WHERE vid in (' . $placeholders . ') ORDER BY RAND()', $vids)->fetchField();
+        // Set now as the last selection and save that tid.
+        variable_set("glossary_block_{$delta}_last", REQUEST_TIME);
+        variable_set("glossary_block_{$delta}_tid", $tid);
+      }
+      else {
+        // Get the current selected tid.
+        $tid = variable_get("glossary_block_{$delta}_tid", 0);
+      }
+
+      $term = taxonomy_term_load($tid);
+      $blocks['content'] = theme('glossary_block_term', array(
+        '0' => $term,
+        '1' => variable_get("glossary_block_{$delta}_link", TRUE))
+      );
+      return $blocks;
+  }
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function glossary_block_configure($delta) {
+  // TODO Rename block deltas (e.g. glossary-search) to readable strings.
+  $form = array();
+  switch ($delta) {
+    case 'glossary-search':
+      // Search block - no config.
+      return $form;
+
+    case 'glossary-random':
+      $vids = array();
+      $vid_list = _glossary_get_filter_vids();
+      foreach ($vid_list as $vid) {
+        $voc = taxonomy_vocabulary_load($vid);
+        $vids[$vid] = check_plain($voc->name);
+      }
+      $form['vids'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Choose from'),
+        '#description' => t('Select the vocabularies from which to choose a term.'),
+        '#options' => $vids,
+        '#default_value' => variable_get("glossary_block_{$delta}_vids", array()),
+        '#prefix' => '<div class="glossary_checkboxes">',
+        '#suffix' => '</div>',
+      );
+
+      $form['interval'] = array(
+        '#type' => 'textfield',
+        '#size' => 4,
+        '#maxlength' => 3,
+        '#default_value' => variable_get("glossary_block_{$delta}_interval", 0),
+        '#field_prefix' => '<strong>' . t('Update every') . '</strong>&nbsp;',
+        '#prefix' => '<div class="container-inline glossary-interval">',
+      );
+
+      $form['step'] = array(
+        '#type' => 'select',
+        '#default_value' => variable_get("glossary_block_{$delta}_step", 0),
+        '#options' => array(
+          1 => t('seconds'),
+          60 => t('minutes'),
+          3600 => t('hours'),
+          86400 => t('days'),
+        ),
+        '#suffix' => '</div>',
+        '#description' => t('How often do you want a new term? Leaving this blank or zero means every time.'),
+      );
+
+      $form['link'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Show term as link'),
+        '#default_value' => variable_get("glossary_block_{$delta}_link", TRUE),
+        '#description' => t('If selected, this option causes the term name to be made a link to the glossary entry.'),
+      );
+
+      return $form;
+  }
+  return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function glossary_block_save($delta, $edit) {
+  // TODO Rename block deltas (e.g. glossary-search) to readable strings.
+  switch ($delta) {
+    case 'glossary-search':
+      // Search block - no config.
+      break;
+
+    case 'glossary-random':
+      variable_set("glossary_block_{$delta}_vids", $edit['vids']);
+      if (!$edit['interval'] || !is_numeric($edit['interval'])) {
+        // Make interval numeric;
+        $edit['interval'] = 0;
+      }
+      variable_set("glossary_block_{$delta}_interval", $edit['interval']);
+      variable_set("glossary_block_{$delta}_step", $edit['step']);
+      variable_set("glossary_block_{$delta}_link", $edit['link']);
+      break;
+  }
+}

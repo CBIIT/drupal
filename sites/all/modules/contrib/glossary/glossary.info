@@ -1,0 +1,12 @@
+name = Glossary
+description = Maintain a glossary on your site.
+core = 7.x
+dependencies[] = taxonomy
+files[] = glossary>admin.inc
+
+; Information added by Drupal.org packaging script on 2014-03-21
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "glossary"
+datestamp = "1395403759"
+
