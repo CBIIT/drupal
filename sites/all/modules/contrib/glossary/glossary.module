@@ -858,7 +858,7 @@ function theme_glossary_overview_item($variables) {
     $term->depth = 0;
   }
 
-  $output .= '<dt class="depth' . $term->depth . '">' . $img;
+  $output .= '<dt class="depth' . $term->depth . '"><strong>' . $img;
   $output .= '<a id="term' . $term->tid . '"></a>';
 
   if ($show_desc) {
@@ -883,7 +883,7 @@ function theme_glossary_overview_item($variables) {
     $output .= l(t('search for term'), 'search/node/"' . $term->name . '"', array('attributes' => array('class' => 'glossary-search-term', 'title' => t('search for content using this term')))
     );
   }
-  $output .= '</dt><dd class="depth' . $term->depth . '">';
+  $output .= '</strong></dt><dd class="depth' . $term->depth . '">';
 
   if ($show_desc) {
     if ($term->description) {
