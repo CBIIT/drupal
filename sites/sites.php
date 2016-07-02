@@ -56,9 +56,11 @@
 
 /* LOCAL */
 $sites['127.0.0.1']            = 'nci-nctn';
+$sites['nci-bridg.local']      = 'nci-bridg';
 $sites['nci-emice.local']      = 'nci-emice';
 $sites['nci-nctn.local']       = 'nci-nctn';
 $sites['nci-itcr.local']       = 'nci-itcr';
+$sites['nci-remoteapps.local'] = 'nci-remote-apps';
 
 /* AWS CI/QA */
 $sites['174.129.249.95']       = 'nci-itcr';
