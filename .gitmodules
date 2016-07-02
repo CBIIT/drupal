@@ -10,3 +10,9 @@
 [submodule "sites/nci-itcr-old"]
 	path = sites/nci-itcr-old
 	url = git@github.com:CBIIT/nci-itcr.git
+[submodule "sites/nci-bridg"]
+	path = sites/nci-bridg
+	url = https://github.com/CBIIT/nci-bridg.git
+[submodule "sites/nci-remote-apps"]
+	path = sites/nci-remote-apps
+	url = git@github.com:CBIIT/nci-remote-apps.git
