@@ -1,0 +1,5 @@
+name = NCI SSO Module
+description = Provides protection using NIH SSO Login.
+core = 7.x
+version = "7.x-1.2"
+configure = "admin/config/people/nci_sso"

@@ -1,0 +1,643 @@
+<?php
+
+/**
+ * @file
+ * Provides protection using NIH SSO Login.
+ */
+
+/**
+ * This will be very basic for version 1.0.  We will setup a menu hook for logging in and out.
+ * Logging in will automatically create the user account if it does not exist.
+ *
+ * Pre-Requirements:
+ * 1. For anything other than Auto Login, the SSO configuration must protect /SSOLogin and use /SSOLogout as the logout
+ *    URL.  (SSO can be configured to have a special logout URL which will remove the SSO cookie.  The cookie will be
+ *    removed before the Drupal logout occurs
+ * 2. For auto login, everything should be protected. We will use the default Drupal /user/logout as the SSO logout.
+ *
+ * How to test on Apache without SSO running (i.e. on your local machine)
+ * 1. Enable the header_module by ensuring the line is uncommented in the httpd.conf:
+ *     LoadModule headers_module modules/mod_headers.so
+ * 2. Restart Apache
+ * 3. Edit the .htaccess file in the root of the Drupal site
+ * 4. Add the following directive to the end of the .htaccess file
+      <IfModule mod_headers.c>
+         RequestHeader set SM_USER "your_username"
+      </IfModule>
+ *
+ * That will add the SM_USER header to the request HTTP Headers mimicking what the SiteMinder agent will add
+ * to the headers.  You can add as many RequestHeader directives you need for other SSO headers.  (e.g. email)
+ *
+ * TODO:
+ * 1. Show an access denied message if a user has been blocked.  The system will not login the user, but
+ *    it does not tell them anything either.  This would be an issue for item 6 as well.
+ *
+ * 2. We need to figure out what to do with images and other items not protected by SSO.
+ * Test using conditions
+ *  AutoLogin
+ *  ONLY SSO
+ *
+ * Doyles Comments:
+ * 1) I added the AUTHTYPE check in the init function. The reason for this is that the
+ * entire site should be protected by SSO... so even if the user did authenticate, they should
+ * still only be able to see pages where its protected.
+ * **Note that this still allows pages that dont call index.php to be loaded like images.
+ *
+ */
+
+/**
+ * Name of module as represented to the user module's authmap APIs.
+ */
+const SSO_MODULE_FOR_AUTHMAP = 'nci_SSO_authentication';
+
+/**
+ *Error Code 1 - Username Header is Empty
+ */
+define('NCI_SSO_ERROR_EMPTY_USER_HEADER', 1);
+/**
+ *Error Code 2 - SM_USER header is missing
+ */
+define('NCI_SSO_ERROR_MISSING_USER_HEADER', 2);
+/**
+ *Error Code 3 - SM_AUTHTYPE header is missing
+ */
+define('NCI_SSO_ERROR_MISSING_AUTH_HEADER', 3);
+
+/**
+ *Error Code 4 - Could not save user account
+ */
+define('NCI_SSO_ERROR_UNABLE_TO_SAVE_USER', 4);
+
+/**
+ *Error Code 5 - Unknown user
+ */
+define('NCI_SSO_ERROR_UNKNOWN_USER', 5);
+
+/**
+ * Error Code 6 - User Blocked
+ */
+define('NCI_SSO_ERROR_USER_BLOCKED', 6);
+
+/**
+ * SSO Login Mode -- Only allow SSO
+ */
+define('NCI_SSO_MODE_ONLY_SSO', 1);
+
+/**
+ * SSO Login Mode -- Allow Mixed Mode
+ */
+define('NCI_SSO_MODE_MIXED', 2);
+
+/**
+ * SSO Login Mode -- Automatically login users
+ */
+define('NCI_SSO_MODE_AUTO_LOGIN', 3);
+
+function nci_SSO_login_mode() {
+    return variable_get('nci_sso_login_mode', NCI_SSO_MODE_ONLY_SSO);
+}
+
+function nci_SSO_autocreate() {
+    return variable_get('nci_sso_autocreate', TRUE);
+}
+
+
+
+/**
+ * Taken and modified from core user.module
+ * Invokes a nci sso user hook in every module.
+ *
+ * We cannot use module_invoke() for this, because the arguments need to
+ * be passed by reference.
+ *
+ * @param $type
+ *   A text string that controls which user hook to invoke.  Valid choices are:
+ *   - insert: Invokes hook_user_insert().
+ * @param $edit
+ *   An associative array variable containing form values to be passed
+ *   as the first parameter of the hook function.
+ * @param $account
+ *   The user account object to be passed as the second parameter of the hook
+ *   function.
+ * @param $category
+ *   The category of user information being acted upon.
+ */
+function nci_sso_module_invoke($type, &$edit, $account, $category = NULL) {
+  foreach (module_implements('nci_sso_' . $type) as $module) {
+    $function = $module . '_nci_sso_' . $type;
+    $function($edit, $account, $category);
+  }
+}
+
+
+/**
+ * Implements hook_init().
+ *
+ * Traps a page load to see if authentication is required.
+ */
+function nci_SSO_init() {
+
+    $path = request_path();
+    $alias = drupal_get_path_alias($path);
+
+    //If not auto login then exit immediately
+	//or if called from command line (e.g. drush) then exit immediately
+    if (
+		nci_SSO_login_mode() != NCI_SSO_MODE_AUTO_LOGIN
+		|| drupal_is_cli()
+	) {
+       return;
+    }
+
+    global $user;
+
+    if($user && !user_is_anonymous()){
+        return;
+    }
+
+    //We expect the site to be protected, but we didn't get what we expected and login failed.
+    //we want to display a 403 message to the user since the system was misconfigured.
+    if (strtolower($alias) != "ssologin")
+    {
+        $options = array();
+        $options['query'] = array();
+        $options['query']['ref'] = $alias;
+
+        drupal_goto('SSOLogin', $options);
+    }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function nci_SSO_menu() {
+    $items = array();
+
+    $items['admin/config/people/nci_sso'] = array(
+        'title' => t("NCI SSO Configuration"),
+        'type' => MENU_NORMAL_ITEM,
+        'page callback' => 'drupal_get_form',
+        'page arguments'=> array('nci_SSO_settings'),
+        'access arguments' => array('administer permissions')
+    );
+
+    //Allow users to create SSO users even if we automatically create them
+    $items['admin/people/create_sso'] = array(
+        'title' => 'Add NIH SSO user',
+        'page arguments' => array('create'),
+        'access arguments' => array('administer users'),
+        'type' => MENU_LOCAL_ACTION,
+    );
+
+    // all login modes need this page - even auto-login redirects here
+    $items['SSOLogin'] = array(
+        'page callback' => 'nci_SSO_menu_login',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    // UI for switching to this method of authentication.
+    $items['user/%/edit/convert_to_sso'] = array(
+        'title' => 'Convert to NIH SSO',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('nci_sso_convert_form', 1),
+        'access callback' => '_nci_sso_switchable',
+        'access arguments' => array(1),
+        'type' => MENU_LOCAL_ACTION,
+    );
+
+    return $items;
+}
+
+/**
+ * Drupal form API callback which generates the form for switching
+ * a user's account from another authentication mechanism to the
+ * mechanism supported by this module.
+ *
+ *  @param  array   $form         Structured array containing the
+ *                                elements and properties of the form
+ *  @param  array   &$form_state  Modifiable structured array
+ *                                containing the current values
+ *                                of the form, as well as other
+ *                                form state information
+ *  @param  int     $uid          primary key of the users table
+ *                                for the account being converted
+ *
+ *  @return array                 Array containing specification
+ *                                of the fields to appear on the
+ *                                form, as well as other markup
+ */
+function nci_sso_convert_form($form, &$form_state, $uid) {
+    $desc = 'The user\'s NIH SSO Username.  You can find this information ' .
+            'by going to https://ned.nih.gov and searching for the user and ' .
+            'viewing the account\'s details.  On the details page this is ' .
+            'the "NIH Login Username" field.  Try to make the Drupal ' .
+            'username match this value if possible.';
+    $atts = array('attributes' => array('class' => 'button'));
+    return array(
+        'title' => array(
+            '#type' => 'item',
+            '#markup' => t('<h1>Convert User to NIH SSO Authentication</h1>'),
+        ),
+        'authname' => array(
+            '#type' => 'textfield',
+            '#title' => t('User NIH SSO Username'),
+            '#maxlength' => 128,
+            '#description' => t($desc),
+            '#required' => true,
+        ),
+        'uid' => array(
+            '#type' => 'hidden',
+            '#value' => $uid,
+        ),
+        'submit' => array(
+            '#type' => 'submit',
+            '#value' => 'Submit',
+        ),
+        'cancel' => array(
+            '#markup' => l(t('Cancel'), "user/$uid/edit", $atts),
+        ),
+    );
+}
+
+/**
+ * Submit handler for the form used to convert a user account to the
+ * authentication method supported by this module.  Clears out the
+ * password from the users table, preventing the use of the standard
+ * Drupal login for the account; clears out the authmap table for
+ * the account, so there's only one authentication handler for that
+ * account; and populates the row for SSO authentication.  Redirects
+ * back to the edit user page.
+ *
+ *  @param  array   $form         Structured array containing the
+ *                                elements and properties of the form
+ *  @param  array   &$form_state  Modifiable structured array
+ *                                containing the current values
+ *                                of the form, as well as other
+ *                                form state information
+ *
+ *  @return     none
+ */
+function nci_sso_convert_form_submit($form, &$form_state) {
+    $uid = $form_state['values']['uid'];
+    db_update('users')
+        ->fields(array('pass' => ''))
+        ->condition('uid', $uid)
+        ->execute();
+    db_delete('authmap')
+        ->condition('uid', $uid)
+        ->execute();
+    $account = user_load($uid);
+    $authname = $form_state['values']['authname'];
+    $authmaps = array('authname_' . SSO_MODULE_FOR_AUTHMAP => $authname);
+    user_set_authmaps($account, $authmaps);
+    drupal_goto("user/$uid/edit");
+}
+
+/**
+ * Callback method to determine whether the form for converting the
+ * account being edited to SSO (and its menu link) should be available.
+ * Two criteria must be met:
+ *  (1) The currently logged-in user must be allowed to manage user accounts;
+ *  (2) The account being edited must not already be an NIH SSO account.
+ *
+ *  @param  int     $uid          primary key of the users table
+ *                                for the account being converted
+ *
+ *  @return boolean               flag indicating whether the switch is
+ *                                available
+ */
+function _nci_sso_switchable($uid) {
+    if (!user_access('administer users'))
+        return false;
+    $authname = _nci_sso_load_authname($uid);
+    return empty($authname) ? true : false;
+}
+
+/**
+ * Helper method to load the NIH login name for a user account.
+ *
+ *  @param  int     $uid          primary key of the users table for
+ *                                the account whose login name is requested
+ *
+ *  @return string                NIH login  name for the account, if
+ *                                available; otherwise returns false
+ */
+function _nci_sso_load_authname($uid) {
+    return db_select('authmap', 'a')
+        ->fields('a', array('authname'))
+        ->condition('a.uid', $uid)
+        ->condition('a.module', SSO_MODULE_FOR_AUTHMAP)
+        ->execute()
+        ->fetchField();
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function nci_SSO_menu_alter(&$items) {
+    //Mixed mode needs login pages etc...  So remove them if SSO only or auto login
+    if (nci_SSO_login_mode() != NCI_SSO_MODE_MIXED) {
+        $items['user']['access callback'] = 'user_is_logged_in'; //only hide the /user page if it is an anonymous user.
+        $items['user/login']['access callback'] = FALSE; //Hide Login
+        $items['user/register']['access callback'] = FALSE; //Hide Registration
+        $items['user/password']['access callback'] = FALSE; //Hide request password page
+        $items['user/reset/%/%/%']['access callback'] = FALSE; //Hide reset password page
+
+    }
+}
+
+/**
+ * Implements hook_block_view_MODULE_DELTA_alter().
+ *
+ * Hide the user login block
+ */
+function nci_SSO_block_view_user_login_alter(&$data, $block) {
+    if (nci_SSO_login_mode() != NCI_SSO_MODE_MIXED) {
+        $data = array();
+    } //else add nice login using NIH SSO
+}
+
+
+/**
+  * Implements hook_form_alter().
+  *
+  * Hides the password fields for SSO authenticated users.
+  */
+function nci_SSO_form_alter(&$form, $form_state, $form_id) {
+    switch($form_id) {
+        case 'user_profile_form' :
+        case 'user_register_form' :
+            //This is the user that is editing the profile -- which
+            //may be a different user's profile
+            global $user;
+
+            $sso_username = FALSE;
+
+            if ($form_id == 'user_register_form' && current_path() != 'admin/people/create_sso') {
+                //This is the normal user add form.
+                return;
+            } else if ($form_id == 'user_profile_form') {
+                // Check the authmap to see if this user uses SSO
+                $uid = $form_state['user']->uid;
+                $sso_username = _nci_sso_load_authname($uid);
+
+                //No SSO username - abort
+                if (!$sso_username) {
+                    return;
+                }
+            }
+
+            unset($form['account']['pass']);
+            unset($form['account']['pass_required_values']);
+            unset($form['account']['current_pass']);
+            unset($form['account']['current_pass_required_values']);
+            $form['#validate'] = array_diff($form['#validate'], array('user_validate_pass', 'user_validate_current_pass'));
+
+            if (user_access('administer users')) {
+                //Can administer users so show edit field
+                $form['account']['user_sso_username'] = array(
+                    '#type' => 'textfield',
+                    '#title' => t('User NIH SSO Username'),
+                    '#maxlength' => 128,
+                    '#description' => t('The users NIH SSO Username.  You can find this information by going to https://ned.nih.gov and search for the user and viewing their details.  On the details page this is the "NIH Login Username" field.  Try to make the Drupal username match this value if possible.'),
+                    '#required' => TRUE,
+                    '#default_value' => ($sso_username ? $sso_username : ''),
+                );
+            } else {
+                //Cannot administer users - or is the user who is not an admin
+                //so just show label.
+                $form['account']['user_sso_username'] = array(
+                '#type' => 'item',
+                '#title' => t('User NIH SSO Username'),
+                '#markup' => $sso_username,
+                );
+
+            }
+
+            //Add our submit handlers before and after the default.
+            // The first is to zero out the password so there are no
+            //    errors
+            // The second is to setup the authmap
+            $form['#submit'] = array_merge(
+                    array('nci_SSO_pass_submit_handler'),
+                    $form['#submit'],
+                    array('nci_SSO_authmap_submit_handler')
+            );
+            break;
+    }
+}
+
+function nci_SSO_pass_submit_handler(&$form, &$form_state) {
+    //Add the user with an empty password - Drupal will not
+    //allow users to authenticate using Drupal auth if
+    //there is no crypt - so if SSO gets turned off, then
+    //the user cannot get in.  This is good.
+    $form_state['values']['pass'] = FALSE;
+}
+
+function nci_SSO_authmap_submit_handler(&$form, &$form_state) {
+    if (isset($form_state['values']['user_sso_username'])) {
+        user_set_authmaps($form_state['user'], array("authenticate_nci_SSO_authentication" => $form_state['values']['user_sso_username']));
+    }
+}
+
+
+/**
+ * Callback for the module configuration item
+ *
+ * The module will configure an authentication type option:
+ * SSO Only Logins (Default) - This will only allow SSO logins for the site. When enabled, all user login things - menu_hooks, blocks, etc... are hidden
+ * Mixed Logins - allow forms to be used with SSO module.  SSO users in theory cannot login using the normal forms login,
+ *  but by using the special /SSOLogin url.  Theoretically, this would be a button or something on the user login forms.
+ * Auto Login - Determines if SSO is protecting the entire site instead of one URL (Default: no)
+ *   - When set to yes, the system will behave like SSO Only Logins, except users will automatically be authenticated.
+ *   NOTE: this also means the ENTIRE site must be protected by SSO.
+ */
+function nci_SSO_settings($form, &$form_state) {
+    $form['nci_sso_login_mode'] = array(
+        '#type' => 'radios',
+        '#title' => t('Site Authentication Type'),
+        '#default_value' => nci_SSO_login_mode(),
+        '#options' => array(
+            NCI_SSO_MODE_ONLY_SSO => t('Only Allow SSO Logins'),
+            NCI_SSO_MODE_MIXED => t('Mixed Authentication'),
+            NCI_SSO_MODE_AUTO_LOGIN => t('Auto Login Using SSO'),
+        ),
+        '#description' => t('Community Portals should be "Mixed Authentication", Non-user based sites "Mixed Authentication", and sites completely protected by SSO should be "Auto Login".')
+    );
+
+    $form['nci_sso_autocreate'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Automatically Create Logins'),
+        '#default_value' => nci_SSO_autocreate(),
+        '#description' => t('Automatically create user accounts on successful SSO authentication.')
+    );
+
+    return system_settings_form($form);
+}
+
+
+/**
+ * Menu callback for logging in through SSO.
+ */
+function nci_SSO_menu_login(){
+
+    //call the login function.
+
+   if($error = _nci_SSO_login())
+   {
+       switch($error){
+           case NCI_SSO_ERROR_EMPTY_USER_HEADER:
+           case NCI_SSO_ERROR_MISSING_USER_HEADER:
+           case NCI_SSO_ERROR_MISSING_AUTH_HEADER:
+           case NCI_SSO_ERROR_UNABLE_TO_SAVE_USER:
+                drupal_add_http_header('Status', '403 Forbidden');
+                drupal_set_title('SSO Login Failed');
+                return t('The site was unable to log the user in. Error Code: ' . $error);
+           break;
+
+           case NCI_SSO_ERROR_UNKNOWN_USER:
+           case NCI_SSO_ERROR_USER_BLOCKED:
+                drupal_add_http_header('Status', '403 Forbidden');
+                drupal_set_title('Login Failed');
+                return t('Unauthorized or Unknown User');
+           break;
+
+       }
+   }
+
+   else {
+        //Let's redirect to the homepage for now.  Maybe have a post_login hook that determines what
+        //to do after a successful login?
+        //The trick is for normal sites where admin is protected by SSO, it makes sense to login the user and
+        //then take them to the homepage or something.
+        //For a site completely proected by SSO, it would be nice to return to the page they requested.
+
+       // check for the existence of a referring page
+       $query = drupal_get_query_parameters();
+
+       if(isset($query['ref']) && drupal_valid_path($query['ref'])) {
+           // lookup alias for referring path
+           $alias = drupal_get_path_alias($query['ref']);
+           drupal_goto($alias);
+       }
+       else
+       {
+           drupal_goto();
+       }
+   }
+}
+
+
+/**
+ * This is the function which actually does the login. Returns a true value if there is an
+ * error processing the login. This is handled in the nci_SSO_init() or  the nci_SSO_menu_login() function.
+ */
+function _nci_SSO_login() {
+    //HTTP_SM_AUTHTYPE should be set to "Form" if it is protected. (This is what we have
+    //observed for the current Drupal SSO Setup)
+    if( !isset($_SERVER['HTTP_SM_AUTHTYPE']) || $_SERVER['HTTP_SM_AUTHTYPE'] != 'Form'){
+        watchdog('SSO Login Failed', 'Page is not protected by SSO.', NULL, WATCHDOG_WARNING);
+        return NCI_SSO_ERROR_MISSING_AUTH_HEADER;
+    }
+    //Step 1. Get the SM_USER HTTP header
+    if (isset($_SERVER['HTTP_SM_USER'])) {
+        $username = $_SERVER['HTTP_SM_USER'];
+
+        if ($username) {
+
+            $_REQUEST['SSOLogin'] = TRUE;
+
+            //Change in v1.1: Check to see if the user has an account first
+            //                Then check to see if we automatically create
+            //                accounts
+            // NOTE, this is a copy of user_external_login_register
+            // since we want to NOT autocreate if that setting is disabled.
+            $account = user_external_load($username);
+            if (!$account) {
+                if (nci_SSO_autocreate()) {
+                    // Register this new user.
+                    $userinfo = array(
+                      'name' => $username,
+                      'pass' => FALSE, //Zero out pass to prevent form logins
+                      'init' => $username,
+                      'status' => 1,
+                      'access' => REQUEST_TIME
+                    );
+                    $account = user_save(drupal_anonymous_user(), $userinfo);
+                    // Terminate if an error occurred during user_save().
+                    if (!$account) {
+                      watchdog('SSO Login Failed', 'Unable to save user', NULL, WATCHDOG_WARNING);
+                      return NCI_SSO_ERROR_UNABLE_TO_SAVE_USER;
+                    }
+                    user_set_authmaps($account, array("authenticate_nci_SSO_authentication" => $username));
+                } else {
+                    //Unknown user account and not autocreating
+                    return NCI_SSO_ERROR_UNKNOWN_USER;
+                }
+            }
+            else if($account->status == 0) {
+                // user is blocked and can't be logged in
+                return NCI_SSO_ERROR_USER_BLOCKED;
+            }
+
+            // Log user in.
+            $form_state['uid'] = $account->uid;
+            user_login_submit(array(), $form_state);
+
+            return 0;
+
+        } else {
+            watchdog('SSO Login Failed', 'Username was empty in headers', NULL, WATCHDOG_WARNING);
+
+            return NCI_SSO_ERROR_EMPTY_USER_HEADER;
+        }
+    } else {
+            watchdog('SSO Login Failed', 'Username was missing from headers', NULL, WATCHDOG_WARNING);
+
+            return NCI_SSO_ERROR_MISSING_USER_HEADER;
+    }
+
+}
+
+/**
+ * Hooks into user_presave to add the email address to a user account when
+ * logging in through SSO.
+ *
+ * registers hook_nci_SSO_insert_presave() to allow external modules to add user
+ * profile fields to new user generation by SSO.
+ *
+ *
+ * $edit: The array of form values submitted by the user.
+ * $account: The user object on which the operation is being performed.
+ * $category: The active category of user information being edited.
+ * @param type $edit
+ * @param type $account
+ * @param type $category
+ */
+function nci_SSO_user_presave(&$edit, $account, $category){
+
+    if( isset($_REQUEST['SSOLogin']) ) //if the session is set...
+    {
+       if(isset($_SERVER['HTTP_USER_EMAIL'])) //if the USER_EMAIL header is set...
+       {
+            $email = $_SERVER['HTTP_USER_EMAIL'];
+
+            if($email) //If the email is valid (We could expend this to check for empty spaces..
+            {
+                $edit['mail'] = $email;
+                //load all other modules implementations of nci_SSO_user_presave.
+                nci_SSO_module_invoke('insert_presave', $edit, $account, $category);
+            }
+            else {
+                    watchdog('Failed to set user email on sso user presave', 'Email was missing.', NULL, WATCHDOG_WARNING);
+
+            }
+       }
+       else {
+           watchdog('Failed to set user email on sso user presave', 'HTTP_USER_EMAIL Header was missing.', NULL, WATCHDOG_WARNING);
+
+       }
+    }
+}
