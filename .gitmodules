@@ -1,18 +1,27 @@
+[submodule "sites/nci-bridg"]
+        path = sites/nci-bridg
+        url = https://github.com/CBIIT/nci-bridg.git
+[submodule "sites/nci-emice"]
+        path = sites/nci-emice
+        url = git@github.com:CBIIT/nci-emice.git
+[submodule "sites/nci-evs"]
+        path = sites/nci-evs
+        url = https://github.com/CBIIT/nci-evs.git
+[submodule "sites/nci-fdacfd"]
+        path = sites/nci-fdacfd
+        url = https://github.com/CBIIT/nci-fdacfd.git
+[submodule "sites/nci-icbp"]
+        path = sites/nci-icbp
+        url = https://github.com/CBIIT/nci-icbp.git
+[submodule "sites/nci-itcr"]
+        path = sites/nci-itcr
+        url = https://github.com/CBIIT/nci-itcr.git
 [submodule "sites/nci-nctn"]
 	path = sites/nci-nctn
 	url = git@github.com:CBIIT/nctn-data-sharing.git
-[submodule "sites/nci-itcr"]
-	path = sites/nci-itcr
-	url = https://github.com/CBIIT/nci-itcr.git
-[submodule "sites/nci-emice"]
-	path = sites/nci-emice
-	url = git@github.com:CBIIT/nci-emice.git
-[submodule "sites/nci-itcr-old"]
-	path = sites/nci-itcr-old
-	url = git@github.com:CBIIT/nci-itcr.git
-[submodule "sites/nci-bridg"]
-	path = sites/nci-bridg
-	url = https://github.com/CBIIT/nci-bridg.git
 [submodule "sites/nci-remote-apps"]
 	path = sites/nci-remote-apps
 	url = git@github.com:CBIIT/nci-remote-apps.git
+[submodule "sites/nci-spl"]
+	path = sites/nci-spl
+	url = https://github.com/CBIIT/nci-spl.git
