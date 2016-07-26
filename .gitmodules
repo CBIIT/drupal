@@ -25,3 +25,15 @@
 [submodule "sites/nci-spl"]
 	path = sites/nci-spl
 	url = https://github.com/CBIIT/nci-spl.git
+[submodule "sites/nci-cbiit"]
+	path = sites/nci-cbiit
+	url = https://github.com/CBIIT/nci-cbiit.git
+[submodule "sites/nci-ncs"]
+	path = sites/nci-ncs
+	url = https://github.com/CBIIT/nci-ncs.git
+[submodule "sites/nci-provocativeqs"]
+	path = sites/nci-provocativeqs
+	url = https://github.com/CBIIT/nci-provocativeqs.git
+[submodule "sites/nci-remoteapps"]
+	path = sites/nci-remoteapps
+	url = https://github.com/CBIIT/nci-remoteapps.git

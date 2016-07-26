@@ -54,98 +54,138 @@
  * @see http://drupal.org/documentation/install/multi-site
  */
 
-/* SERVER DEFAULTS */
-// Local
-$sites['127.0.0.1']                           = 'default';
-// AWS/Dev
-$sites['50.17.223.185']                       = 'default';
-// AWS/QA
-$sites['174.129.249.95']                      = 'default';
-// NCI/Dev 
-$sites['10.133.108.118']                      = 'default';
-// NCI/Stage
-$sites['10.133.202.147']                      = 'default';
-// NCI/Prod - varies
+/* SERVERS 
+ * =======
+ * Localhost:  127.0.0.1
+ * AWS/Dev:    50.17.223.185
+ * AWS/QA:     174.129.249.95
+ * NCI/Dev1:   10.133.108.118
+ * NCI/Dev2:   10.133.108.132
+ * NCI/Stage1: 10.133.104.131
+ * NCI/Stage2: 10.133.104.132
+ * NCI/Prod1:  10.133.210.107
+ * NCI/Prod2:  10.133.210.108
+ */
+
+/* FIRST CLUSTER 
+ * =============
+ */
 
 /* BRIDG */
-$sites['nci-bridg.local']                     = 'nci-bridg';
-$sites['nci-bridg.dev']                       = 'nci-bridg';
-$sites['nci-bridg.qa']                        = 'nci-bridg';
-$sites['nci-bridg.nci']                       = 'nci-bridg';
-$sites['bridgmodel-dev-sg.nci.nih.gov']       = 'nci-bridg';
-$sites['bridgmodel-stage-sg.nci.nih.gov']     = 'nci-bridg';
-$sites['bridgmodel.nci.nih.gov']              = 'nci-bridg';
-$sites['bridgmodel.org']                      = 'nci-bridg';
+$sites['nci-bridg.local']                           = 'nci-bridg';
+$sites['nci-bridg.dev']                             = 'nci-bridg';
+$sites['nci-bridg.qa']                              = 'nci-bridg';
+$sites['nci-bridg.nci']                             = 'nci-bridg';
+$sites['bridgmodel-dev-sg.nci.nih.gov']             = 'nci-bridg';
+$sites['bridgmodel-stage-sg.nci.nih.gov']           = 'nci-bridg';
+$sites['bridgmodel.nci.nih.gov']                    = 'nci-bridg';
+$sites['bridgmodel.org']                            = 'nci-bridg';
+
+/* CBIIT */
+$sites['nci-cbiit.local']                           = 'nci-cbiit';
+$sites['nci-cbiit.dev']                             = 'nci-cbiit';
+$sites['nci-cbiit.qa']                              = 'nci-cbiit';
+$sites['nci-cbiit.nci']                             = 'nci-cbiit';
+$sites['cbiit-dev-sg.nci.nih.gov']                  = 'nci-cbiit';
+$sites['cbiit-stage-sg.nci.nih.gov']                = 'nci-cbiit';
+$sites['cbiit-stage-sg.nci.nih.gov']                = 'nci-cbiit';
+$sites['cbiit.nci.nih.gov']                         = 'nci-cbiit';
 
 /* EMICE */
-$sites['nci-emice.local']                     = 'nci-emice';
-$sites['nci-emice.dev']                       = 'nci-emice';
-$sites['nci-emice.qa']                        = 'nci-emice';
-$sites['nci-emice.nci']                       = 'nci-emice';
-$sites['emice-dev-sg.nci.nih.gov']            = 'nci-emice';
-$sites['emice-stage-sg.nci.nih.gov']          = 'nci-emice';
-$sites['emice-stage-sg.nci.nih.gov']          = 'nci-emice';
-$sites['emice.nci.nih.gov']                   = 'nci-emice';
-
-/* EVS */
-$sites['nci-evs.local']                       = 'nci-evs';
-$sites['nci-evs.dev']                         = 'nci-evs';
-$sites['nci-evs.qa']                          = 'nci-evs';
-$sites['nci-evs.nci']                         = 'nci-evs';
-$sites['evs-dev-sg.nci.nih.gov']              = 'nci-evs';
-$sites['evs-stage-sg.nci.nih.gov']            = 'nci-evs';
-$sites['evs.nci.nih.gov']                     = 'nci-evs';
-
-/* FDACFD */
-$sites['nci-fdacfd.local']                    = 'nci-fdacfd';
-$sites['nci-fdacfd.dev']                      = 'nci-fdacfd';
-$sites['nci-fdacfd.qa']                       = 'nci-fdacfd';
-$sites['nci-fdacfd.nci']                      = 'nci-fdacfd';
-$sites['fdacfd-dev-sg.nci.nih.gov']           = 'nci-fdacfd';
-$sites['fdacfd-stage-sg.nci.nih.gov']         = 'nci-fdacfd';
-$sites['fdacfd.nci.nih.gov']                  = 'nci-fdacfd';
-
-/* ICBP */
-$sites['nci-icbp.local']                      = 'nci-icbp';
-$sites['nci-icbp.dev']                        = 'nci-icbp';
-$sites['nci-icbp.qa']                         = 'nci-icbp';
-$sites['nci-icbp.nci']                        = 'nci-icbp';
-$sites['icbp-dev-sg.nci.nih.gov']             = 'nci-icbp';
-$sites['icbp-stage-sg.nci.nih.gov']           = 'nci-icbp';
-$sites['icbp.nci.nih.gov']                    = 'nci-icbp';
+$sites['nci-emice.local']                           = 'nci-emice';
+$sites['nci-emice.dev']                             = 'nci-emice';
+$sites['nci-emice.qa']                              = 'nci-emice';
+$sites['nci-emice.nci']                             = 'nci-emice';
+$sites['emice-dev-sg.nci.nih.gov']                  = 'nci-emice';
+$sites['emice-stage-sg.nci.nih.gov']                = 'nci-emice';
+$sites['emice-stage-sg.nci.nih.gov']                = 'nci-emice';
+$sites['emice.nci.nih.gov']                         = 'nci-emice';
 
 /* ITCR */
-$sites['nci-itcr.local']                      = 'nci-itcr';
-$sites['nci-itcr.dev']                        = 'nci-itcr';
-$sites['nci-itcr.qa']                         = 'nci-itcr';
-$sites['nci-itcr.nci']                        = 'nci-itcr';
-$sites['itcr-dev-sg.nci.nih.gov']             = 'nci-itcr';
-$sites['itcr-stage-sg.nci.nih.gov']           = 'nci-itcr';
-$sites['itcr.nci.nih.gov']                    = 'nci-itcr';
+$sites['nci-itcr.local']                            = 'nci-itcr';
+$sites['nci-itcr.dev']                              = 'nci-itcr';
+$sites['nci-itcr.qa']                               = 'nci-itcr';
+$sites['nci-itcr.nci']                              = 'nci-itcr';
+$sites['itcr-dev-sg.nci.nih.gov']                   = 'nci-itcr';
+$sites['itcr-stage-sg.nci.nih.gov']                 = 'nci-itcr';
+$sites['itcr.nci.nih.gov']                          = 'nci-itcr';
 
-/* NCTN Data Archive */
-$sites['nci-nctn.local']                      = 'nci-nctn';
-$sites['nci-nctn.dev']                        = 'nci-nctn';
-$sites['nci-nctn.qa']                         = 'nci-nctn';
-$sites['nci-nctn.nci']                        = 'nci-nctn';
-$sites['nctn-dev.nci.nih.gov']                = 'nci-nctn';
-$sites['nctn-data-archive-stage.nci.nih.gov'] = 'nci-nctn';
-$sites['nctn-data-archive.nci.nih.gov']       = 'nci-nctn';
+/* NCS */
+$sites['nci-ncs.local']                             = 'nci-ncs';
+$sites['nci-ncs.dev']                               = 'nci-ncs';
+$sites['nci-ncs.qa']                                = 'nci-ncs';
+$sites['nci-ncs.nci']                               = 'nci-ncs';
+$sites['ncs-dev-sg.cancer.gov']                     = 'nci-ncs';
+$sites['ncs-stage-sg.cancer.gov']                   = 'nci-ncs';
+$sites['ncs.nci.nih.gov']                           = 'nci-ncs';
 
-/* Remote Apps */
-$sites['nci-remoteapps.local']                = 'nci-remote-apps';
-$sites['nci-remoteapps.dev']                  = 'nci-remote-apps';
-$sites['nci-remoteapps.qa']                   = 'nci-remote-apps';
-$sites['nci-remoteapps.nci']                  = 'nci-remote-apps';
-$sites['remoteapps-dev-sg.nci.nih.gov']       = 'nci-remote-apps';
-$sites['remoteapps-stage-sg.nci.nih.gov']     = 'nci-remote-apps';
-$sites['remoteapps.nci.nih.gov']              = 'nci-remote-apps';
+/* NCTN DATA ARCHIVE */
+$sites['nci-nctn.local']                            = 'nci-nctn';
+$sites['nci-nctn.dev']                              = 'nci-nctn';
+$sites['nci-nctn.qa']                               = 'nci-nctn';
+$sites['nci-nctn.nci']                              = 'nci-nctn';
+$sites['nctn-dev.nci.nih.gov']                      = 'nci-nctn';
+$sites['nctn-data-archive-stage.nci.nih.gov']       = 'nci-nctn';
+$sites['nctn-data-archive.nci.nih.gov']             = 'nci-nctn';
+
+/* SECOND CLUSTER 
+ * ==============
+ */
+
+/* EVS */
+$sites['nci-evs.local']                             = 'nci-evs';
+$sites['nci-evs.dev']                               = 'nci-evs';
+$sites['nci-evs.qa']                                = 'nci-evs';
+$sites['nci-evs.nci']                               = 'nci-evs';
+$sites['evs-dev-sg.nci.nih.gov']                    = 'nci-evs';
+$sites['evs-stage-sg.nci.nih.gov']                  = 'nci-evs';
+$sites['evs.nci.nih.gov']                           = 'nci-evs';
+
+/* FDACFD */
+$sites['nci-fdacfd.local']                          = 'nci-fdacfd';
+$sites['nci-fdacfd.dev']                            = 'nci-fdacfd';
+$sites['nci-fdacfd.qa']                             = 'nci-fdacfd';
+$sites['nci-fdacfd.nci']                            = 'nci-fdacfd';
+$sites['fdacfd-dev-sg.nci.nih.gov']                 = 'nci-fdacfd';
+$sites['fdacfd-stage-sg.nci.nih.gov']               = 'nci-fdacfd';
+$sites['fdacfd.nci.nih.gov']                        = 'nci-fdacfd';
+
+/* ICBP */
+$sites['nci-icbp.local']                            = 'nci-icbp';
+$sites['nci-icbp.dev']                              = 'nci-icbp';
+$sites['nci-icbp.qa']                               = 'nci-icbp';
+$sites['nci-icbp.nci']                              = 'nci-icbp';
+$sites['icbp-dev-sg.nci.nih.gov']                   = 'nci-icbp';
+$sites['icbp-stage-sg.nci.nih.gov']                 = 'nci-icbp';
+$sites['icbp.nci.nih.gov']                          = 'nci-icbp';
+
+/* PROVOCATIVE QUESTIONS */
+$sites['nci-provocativeqs.local']                   = 'nci-provocativeqs';
+$sites['nci-provocativeqs.dev']                     = 'nci-provocativeqs';
+$sites['nci-provocativeqs.qa']                      = 'nci-provocativeqs';
+$sites['nci-provocativeqs.nci']                     = 'nci-provocativeqs';
+$sites['provocativequestions-dev-sg.nci.nih.gov']   = 'nci-provocativeqs';
+$sites['provocativequestions-stage-sg.nci.nih.gov'] = 'nci-provocativeqs';
+$sites['provocativequestions.nci.nih.gov']          = 'nci-provocativeqs';
 
 /* SPL */
-$sites['nci-spl.local']                       = 'nci-spl';
-$sites['nci-spl.dev']                         = 'nci-spl';
-$sites['nci-spl.qa']                          = 'nci-spl';
-$sites['nci-spl.nci']                         = 'nci-spl';
-$sites['spl-dev-sg.nci.nih.gov']              = 'nci-spl';
-$sites['spl-stage-sg.nci.nih.gov']            = 'nci-spl';
-$sites['spl.nci.nih.gov']                     = 'nci-spl';
+$sites['nci-spl.local']                             = 'nci-spl';
+$sites['nci-spl.dev']                               = 'nci-spl';
+$sites['nci-spl.qa']                                = 'nci-spl';
+$sites['nci-spl.nci']                               = 'nci-spl';
+$sites['spl-dev-sg.nci.nih.gov']                    = 'nci-spl';
+$sites['spl-stage-sg.nci.nih.gov']                  = 'nci-spl';
+$sites['spl.nci.nih.gov']                           = 'nci-spl';
+
+/* OTHER 
+ * =====
+ */
+
+/* REMOTE APPS */
+$sites['nci-remoteapps.local']                      = 'nci-remoteapps';
+$sites['nci-remoteapps.dev']                        = 'nci-remoteapps';
+$sites['nci-remoteapps.qa']                         = 'nci-remoteapps';
+$sites['nci-remoteapps.nci']                        = 'nci-remoteapps';
+$sites['remoteapps-dev-sg.nci.nih.gov']             = 'nci-remoteapps';
+$sites['remoteapps-stage-sg.nci.nih.gov']           = 'nci-remoteapps';
+$sites['remoteapps.nci.nih.gov']                    = 'nci-remoteapps';
