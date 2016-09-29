@@ -1,0 +1,44 @@
+diff --git a/imce_private_files.module b/imce_private_files.module
+index 8255b28..a311238 100644
+--- a/imce_private_files.module
++++ b/imce_private_files.module
+@@ -79,8 +79,8 @@ function imce_private_files_file_download($uri) {
+  * @param string $uri
+  *    URI of the file to test, as listed in the file_managed table.
+  *
+- * @return int|null
+- *    Returns NULL for "pass", -1 for "fail".
++ * @return array|int
++ *    Returns array of headers for "pass", -1 for "fail".
+  */
+ function imce_private_files_simple($uri) {
+   global $user;
+@@ -94,7 +94,7 @@ function imce_private_files_simple($uri) {
+         )
+       );
+     }
+-    return NULL;
++    return array('Content-Type' => file_get_mimetype($uri));
+   }
+   else {
+     if (variable_get('imce_private_files_debug')) {
+@@ -122,8 +122,8 @@ function imce_private_files_simple($uri) {
+  * @param string $uri
+  *   URI of the file to test, as listed in the file_managed table.
+  *
+- * @return int|null
+- *    Returns NULL for "pass", -1 for "fail".
++ * @return array|int
++ *    Returns array of headers for "pass", -1 for "fail".
+  */
+ function imce_private_files_passthrough($uri) {
+   global $user;
+@@ -151,7 +151,7 @@ function imce_private_files_passthrough($uri) {
+         );
+       }
+       if (preg_match("$pattern", $filepath)) {
+-        return NULL;
++        return array('Content-Type' => file_get_mimetype($uri));
+       }
+     }
+   }
