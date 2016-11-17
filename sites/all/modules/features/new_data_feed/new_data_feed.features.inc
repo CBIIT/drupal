@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * nctn_data_set_services.features.inc
+ * new_data_feed.features.inc
  */
 
 /**
  * Implements hook_ctools_plugin_api().
  */
-function nctn_data_set_services_ctools_plugin_api($module = NULL, $api = NULL) {
+function new_data_feed_ctools_plugin_api($module = NULL, $api = NULL) {
   if ($module == "services" && $api == "services") {
     return array("version" => "3");
   }
@@ -16,6 +16,6 @@ function nctn_data_set_services_ctools_plugin_api($module = NULL, $api = NULL) {
 /**
  * Implements hook_views_api().
  */
-function nctn_data_set_services_views_api($module = NULL, $api = NULL) {
+function new_data_feed_views_api($module = NULL, $api = NULL) {
   return array("api" => "3.0");
 }

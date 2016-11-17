@@ -1,7 +1,6 @@
-name = data set services
-description = data set services
+name = new data feed
 core = 7.x
-package = nctn-data-archive
+package = nci-nctn
 dependencies[] = ctools
 dependencies[] = libraries
 dependencies[] = rest_server

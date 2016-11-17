@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the new data feed feature.
+ */
+
+include_once 'new_data_feed.features.inc';

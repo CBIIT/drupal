@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * nctn_data_set_services.views_default.inc
+ * new_data_feed.views_default.inc
  */
 
 /**
  * Implements hook_views_default_views().
  */
-function nctn_data_set_services_views_default_views() {
+function new_data_feed_views_default_views() {
   $export = array();
 
   $view = new view();
@@ -120,7 +120,7 @@ function nctn_data_set_services_views_default_views() {
 
   /* Display: Services */
   $handler = $view->new_display('services', 'Services', 'services_1');
-  $handler->display->display_options['path'] = 'key';
+  $handler->display->display_options['path'] = 'data-set-services';
   $export['request_view'] = $view;
 
   return $export;

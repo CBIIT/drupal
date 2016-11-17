@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the data set services feature.
- */
-
-include_once 'nctn_data_set_services.features.inc';

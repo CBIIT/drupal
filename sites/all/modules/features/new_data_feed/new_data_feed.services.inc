@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * nctn_data_set_services.services.inc
+ * new_data_feed.services.inc
  */
 
 /**
  * Implements hook_default_services_endpoint().
  */
-function nctn_data_set_services_default_services_endpoint() {
+function new_data_feed_default_services_endpoint() {
   $export = array();
 
   $endpoint = new stdClass();
@@ -21,7 +21,7 @@ function nctn_data_set_services_default_services_endpoint() {
   );
   $endpoint->server_settings = array();
   $endpoint->resources = array(
-    'key' => array(
+    'data-set-services' => array(
       'operations' => array(
         'index' => array(
           'enabled' => '1',
