@@ -1,0 +1,16 @@
+name = data set services
+description = data set services
+core = 7.x
+package = nctn-data-archive
+dependencies[] = ctools
+dependencies[] = libraries
+dependencies[] = rest_server
+dependencies[] = services
+dependencies[] = services_basic_auth
+dependencies[] = services_views
+dependencies[] = views
+features[ctools][] = services:services:3
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[services_endpoint][] = request_view
+features[views_view][] = request_view
