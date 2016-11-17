@@ -67,6 +67,11 @@
  * NCI/Prod2:  10.133.210.108
  */
 
+
+#nci-metastatic-niche.local
+$sites['nci-metastatic-niche.local']                           = 'nci-metastatic-niche';
+$sites['nci-metastatic-niche.dev']                           = 'nci-metastatic-niche';
+
 /* FIRST CLUSTER 
  * =============
  */

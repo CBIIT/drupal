@@ -37,3 +37,6 @@
 [submodule "sites/nci-remoteapps"]
 	path = sites/nci-remoteapps
 	url = https://github.com/CBIIT/nci-remoteapps.git
+[submodule "sites/nci-metastatic-niche"]
+	path = sites/nci-metastatic-niche
+	url = https://github.com/CBIIT/nci-metastatic-niche.git
