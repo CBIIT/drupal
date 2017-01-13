@@ -6,9 +6,9 @@ configure = admin/config/people/agreement
 
 files[] = agreement.test
 
-; Information added by drupal.org packaging script on 2013-09-30
-version = "7.x-2.x-dev"
+; Information added by Drupal.org packaging script on 2016-12-08
+version = "7.x-2.0-alpha1"
 core = "7.x"
 project = "agreement"
-datestamp = "1380553344"
+datestamp = "1481234585"
 

@@ -27,28 +27,28 @@ function agreement_schema() {
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-    ),
+      ),
       'uid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-    ),
+      ),
       'agreed' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-    ),
+      ),
       'sid' => array(
         'type' => 'varchar',
         'length' => 46,
-    ),
+      ),
       'agreed_date' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
+      ),
     ),
-  ),
     'primary key' => array('id'),
   );
 
@@ -74,3 +74,54 @@ function agreement_uninstall() {
   variable_del('agreement_email_recipient');
 }
 
+/**
+ * Migrate from 'skip agreement' to 'bypass agreement' permission.
+ */
+function agreement_update_7200() {
+
+  // Find any permissions that a user may have configured without running the
+  // update.
+  $rids = array();
+
+  $query = db_select('role_permission', 'rp');
+  $res = $query
+    ->condition('module', 'agreement')
+    ->condition('permission', 'bypass agreement')
+    ->fields('rp', array('rid'))
+    ->execute();
+  foreach ($res as $rec) {
+    $rids[] = $rec->rid;
+  }
+
+  // Update any role permission from skip agreement to bypass agreement.
+  $query = db_update('role_permission');
+  $query
+    ->condition('module', 'agreement')
+    ->condition('permission', 'skip agreement')
+    ->fields(array('permission' => 'bypass agreement'));
+
+  if (!empty($rids)) {
+    // Do not update already configured role permissions.
+    $query->condition('rid', $rids, 'NOT IN');
+  }
+
+  $updated_num = $query->execute();
+  $deleted_num = 0;
+
+  if (!empty($rids)) {
+    // Remove old role permissions if already configured role permissions exist.
+    $query = db_delete('role_permission');
+    $deleted_num = $query
+      ->condition('rid', $rids, 'IN')
+      ->condition('permission', 'skip agreement')
+      ->condition('module', 'agreement')
+      ->execute();
+  }
+
+  $items = array();
+  $items[] = format_plural($updated_num, 'Updated 1 permission', 'Updated @count permissions');
+  $items[] = format_plural(count($rids), 'Ignored 1 existing permission', 'Ignored @count existing permissions');
+  $items[] = format_plural($deleted_num, 'Deleted 1 old permission', 'Deleted @count old permissions');
+
+  return theme('item_list', array('items' => $items));
+}

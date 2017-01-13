@@ -1,0 +1,119 @@
+diff --git a/agreement.module b/agreement.module
+index 84031e8..b8fc09b 100644
+--- a/agreement.module
++++ b/agreement.module
+@@ -37,59 +37,61 @@ function agreement_init() {
+   // If the user hasn't already agreed, redirect them to the agreement page.
+   global $user;
+ 
+-  // Check to make sure the user belongs to an agreement-restricted role.
+-  // Members with the 'bypass agreement' permission are excluded from the agreement.
+-  if (array_key_exists(variable_get('agreement_role', -1), $user->roles) && !user_access('bypass agreement')) {
+-    $agreement_status = _agreement_status($user->uid);
+-
+-    // We will not redirect to the agreement page from these URLs.
+-    $exceptions = array(
+-      variable_get('agreement_page_url', AGREEMENT_PAGE_URL),
+-      'user/logout',
+-      'admin/config/people/agreement',
+-    );
++  foreach (variable_get('agreement_role', array('-1'=>'-1')) as $key => $value) {
++    // Check to make sure the user belongs to an agreement-restricted role.
++    // Members with the 'bypass agreement' permission are excluded from the agreement.
++    if (array_key_exists($key, $user->roles) && !user_access('skip agreement')) {
++      $agreement_status = _agreement_status($user->uid);
++
++      // We will not redirect to the agreement page from these URLs.
++      $exceptions = array(
++        variable_get('agreement_page_url', AGREEMENT_PAGE_URL),
++        'user/logout',
++        'admin/config/people/agreement',
++      );
+ 
+-    if ((!isset($agreement_status) || !$agreement_status) && !in_array($_GET['q'], $exceptions)) {
+-      // Match path if necessary.
+-      if ($visibility_pages = check_plain(variable_get('agreement_page_visibility_pages', FALSE))) {
+-        // Convert path to lowercase. This allows comparison of the same path
+-        // with different case. Ex: /Page, /page, /PAGE.
+-        $pages = drupal_strtolower($visibility_pages);
++      if ((!isset($agreement_status) || !$agreement_status) && !in_array($_GET['q'], $exceptions)) {
++        // Match path if necessary.
++        if ($visibility_pages = check_plain(variable_get('agreement_page_visibility_pages', FALSE))) {
++          // Convert path to lowercase. This allows comparison of the same path
++          // with different case. Ex: /Page, /page, /PAGE.
++          $pages = drupal_strtolower($visibility_pages);
+ 
+-        // check_plain() converts <front> to &lt;front&gt; so need to convert
+-        // it back before matching.
+-        $pages = html_entity_decode($pages);
++          // check_plain() converts <front> to &lt;front&gt; so need to convert
++          // it back before matching.
++          $pages = html_entity_decode($pages);
+ 
+-        // Convert the Drupal path to lowercase.
+-        $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
++          // Convert the Drupal path to lowercase.
++          $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+ 
+-        // Compare the lowercase internal and lowercase path alias (if any).
+-        $page_match = drupal_match_path($path, $pages);
+-        if ($path != $_GET['q']) {
+-          $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+-        }
++          // Compare the lowercase internal and lowercase path alias (if any).
++          $page_match = drupal_match_path($path, $pages);
++          if ($path != $_GET['q']) {
++            $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
++          }
+ 
+-        // When $visibility_settings has a value of 0, the agreement is displayed on all pages except
+-        // those listed in $pages. When set to 1, it is displayed only on those pages listed in $pages.
+-        $page_match = !(check_plain(variable_get('agreement_page_visibility_settings', 0)) xor $page_match);
+-      }
+-      else {
+-        $page_match = TRUE;
+-      }
++          // When $visibility_settings has a value of 0, the agreement is displayed on all pages except
++          // those listed in $pages. When set to 1, it is displayed only on those pages listed in $pages.
++          $page_match = !(check_plain(variable_get('agreement_page_visibility_settings', 0)) xor $page_match);
++        }
++        else {
++          $page_match = TRUE;
++        }
+ 
+-      if ($page_match) {
+-        // Save intended destination.
+-        if (!isset($_SESSION['agreement_destination'])) {
+-          if (preg_match('/^user\/reset/', $_GET['q'])) {
+-            $_SESSION['agreement_destination'] = 'change password';
+-          }
+-          else {
+-            $_SESSION['agreement_destination'] = $_GET['q'];
++        if ($page_match) {
++          // Save intended destination.
++          if (!isset($_SESSION['agreement_destination'])) {
++            if (preg_match('/^user\/reset/', $_GET['q'])) {
++              $_SESSION['agreement_destination'] = 'change password';
++            }
++            else {
++              $_SESSION['agreement_destination'] = $_GET['q'];
++            }
+           }
+-        }
+ 
+-        drupal_goto(check_plain(variable_get('agreement_page_url', AGREEMENT_PAGE_URL)));
+-        exit();
++          drupal_goto(check_plain(variable_get('agreement_page_url', AGREEMENT_PAGE_URL)));
++          exit();
++        }
+       }
+     }
+   }
+@@ -233,6 +235,7 @@ function agreement_settings() {
+     '#required'       => TRUE,
+     '#title'          => t('User role'),
+     '#type'           => 'select',
++    '#multiple'       => TRUE,
+   );
+ 
+   $form['agreement_frequency'] = array(
