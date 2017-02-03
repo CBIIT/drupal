@@ -36,8 +36,8 @@ function agreement_permission() {
 function agreement_init() {
   // If the user hasn't already agreed, redirect them to the agreement page.
   global $user;
-
-  foreach (variable_get('agreement_role', array('-1'=>'-1')) as $key => $value) {
+  if (is_array(variable_get('agreement_role'))) { 
+   foreach (variable_get('agreement_role', array('-1'=>'-1')) as $key => $value) {
     // Check to make sure the user belongs to an agreement-restricted role.
     // Members with the 'bypass agreement' permission are excluded from the agreement.
     if (array_key_exists($key, $user->roles) && !user_access('skip agreement')) {
@@ -95,6 +95,7 @@ function agreement_init() {
       }
     }
   }
+}
 }
 
 /**
