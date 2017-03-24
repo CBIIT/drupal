@@ -147,3 +147,10 @@ DirectoryIndex index.php index.html index.htm
   # Disable content sniffing, since it's an attack vector.
   Header always set X-Content-Type-Options nosniff
 </IfModule>
+###
+### Support for https://www.drupal.org/project/js module.
+###
+RewriteCond %{REQUEST_URI} ^\/(?:[a-z]{2}(?:-[A-Za-z]{2,4})?\/)?(?:js|js\/.*)$
+RewriteRule ^(.*)$ js.php?q=$1 [L,QSA]
+RewriteCond %{QUERY_STRING} (^|&)q=(?:[a-z]{2}(?:-[A-Za-z]{2,4})?\/)?(?:js|js\/.*)
+RewriteRule .* js.php [L]
