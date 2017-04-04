@@ -1,0 +1,50 @@
+***************
+*** 29,34 ****
+      'text_long',
+      'text_with_summary',
+    );
+    foreach (field_info_instances($entity_type, $bundle_name) as $name => $instance) {
+      $info = field_info_field($name);
+      unset($callback);
+--- 29,35 ----
+      'text_long',
+      'text_with_summary',
+    );
++   $unique = array();
+    foreach (field_info_instances($entity_type, $bundle_name) as $name => $instance) {
+      $info = field_info_field($name);
+      unset($callback);
+***************
+*** 38,48 ****
+      if (in_array($info['type'], $string_types)) {
+        $callback = 'field_feeds_set_target_text';
+      }
+      if (isset($callback)) {
+        $targets[$name] = array(
+          'name' => check_plain($instance['label']),
+          'callback' => $callback,
+          'description' => t('The @label field of the node.', array('@label' => $instance['label'])),
+        );
+      }
+    }
+--- 39,58 ----
+      if (in_array($info['type'], $string_types)) {
+        $callback = 'field_feeds_set_target_text';
+      }
++     if (module_exists('unique_field')) {
++       $info = field_info_field($name);
++       $scope = variable_get('unique_field_scope_'. $bundle_name, UNIQUE_FIELD_SCOPE_TYPE);
++       $unique[$name] = (($scope == UNIQUE_FIELD_SCOPE_TYPE || $scope == UNIQUE_FIELD_SCOPE_ALL) && in_array($name, variable_get('unique_field_fields_' . $bundle_name, array())));
++     }
++     else {
++       $unique[$name] = FALSE;
++     }
+      if (isset($callback)) {
+        $targets[$name] = array(
+          'name' => check_plain($instance['label']),
+          'callback' => $callback,
+          'description' => t('The @label field of the node.', array('@label' => $instance['label'])),
++         'optional_unique' => $unique[$name],
+        );
+      }
+    }
