@@ -275,9 +275,9 @@ function http_request_get($url, $username = NULL, $password = NULL, $accept_inva
       return http_request_get($url, $username, $password, $accept_invalid_cert, $request_timeout);
     }
   }
-$user_url = "https://mpmdev.ondemand.sas.com/projectdatasphere/html/rest/NCI/users";
-$request_url = "https://mpmdev.ondemand.sas.com/projectdatasphere/html/rest/NCI/requests";
-$request_other_approved_users_url = "https://mpmdev.ondemand.sas.com/projectdatasphere/html/rest/NCI/requests/otherapprovedusers";
+$user_url = "https://www.projectdatasphere.org/projectdatasphere/html/rest/NCI/users";
+$request_url = "https://www.projectdatasphere.org/projectdatasphere/html/rest/NCI/requests";
+$request_other_approved_users_url = "https://www.projectdatasphere.org/projectdatasphere/html/rest/NCI/requests/otherapprovedusers";
 if($url == $user_url){
 $pdsdata = pds_data();
 $result->data = $pdsdata['user_data'];
