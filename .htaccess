@@ -5,7 +5,7 @@
 # Protect files and directories from prying eyes.
 <FilesMatch "\.(engine|inc|info|install|make|module|profile|test|po|sh|.*sql|theme|tpl(\.php)?|xtmpl)(~|\.sw[op]|\.bak|\.orig|\.save)?$|^(\.(?!well-known).*|Entries.*|Repository|Root|Tag|Template|composer\.(json|lock))$|^#.*#$|\.php(~|\.sw[op]|\.bak|\.orig\.save)$">
   <IfModule mod_authz_core.c>
-    Require all denied
+    Require all granted
   </IfModule>
   <IfModule !mod_authz_core.c>
     Order allow,deny
@@ -152,3 +152,11 @@ DirectoryIndex index.php index.html index.htm
   # Disable content sniffing, since it's an attack vector.
   Header always set X-Content-Type-Options nosniff
 </IfModule>
+
+###
+### Support for https://www.drupal.org/project/js module.
+###
+RewriteCond %{REQUEST_URI} ^\/(?:[a-z]{2}(?:-[A-Za-z]{2,4})?\/)?(?:js|js\/.*)$
+RewriteRule ^(.*)$ js.php?q=$1 [L,QSA]
+RewriteCond %{QUERY_STRING} (^|&)q=(?:[a-z]{2}(?:-[A-Za-z]{2,4})?\/)?(?:js|js\/.*)
+RewriteRule .* js.php [L]
