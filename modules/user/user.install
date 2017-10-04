@@ -49,6 +49,9 @@ function user_schema() {
         'columns' => array('uid' => 'uid'),
       ),
     ),
+    'indexes' => array(
+      'uid_module' => array('uid', 'module'),
+    ),
   );
 
   $schema['role_permission'] = array(
@@ -911,15 +914,14 @@ function user_update_7018() {
 }
 
 /**
- * Add fallback for new 'administer user settings' permission.
+ * Ensure there is a combined index on {authmap}.uid and {authmap}.module.
  */
 function user_update_7019() {
-  $user_admin_roles = user_roles(FALSE, 'administer users');
-  foreach (array_keys($user_admin_roles) as $rid => $role) {
-    user_role_grant_permissions($rid, array('administer user settings'));
+  // Check first in case it was already added manually.
+  if (!db_index_exists('authmap', 'uid_module')) {
+    db_add_index('authmap', 'uid_module', array('uid', 'module'));
   }
 }
-
 /**
  * @} End of "addtogroup updates-7.x-extra".
  */

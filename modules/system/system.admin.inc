@@ -459,13 +459,15 @@ function system_theme_settings($form, &$form_state, $key = '') {
     $form['logo'] = array(
       '#type' => 'fieldset',
       '#title' => t('Logo image settings'),
+      '#description' => t('If toggled on, the following logo will be displayed.'),
       '#attributes' => array('class' => array('theme-settings-bottom')),
     );
     $form['logo']['default_logo'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use the default logo supplied by the theme'),
+      '#title' => t('Use the default logo'),
       '#default_value' => theme_get_setting('default_logo', $key),
       '#tree' => FALSE,
+      '#description' => t('Check here if you want the theme to use the logo supplied with it.')
     );
     $form['logo']['settings'] = array(
       '#type' => 'container',
@@ -479,6 +481,7 @@ function system_theme_settings($form, &$form_state, $key = '') {
     $form['logo']['settings']['logo_path'] = array(
       '#type' => 'textfield',
       '#title' => t('Path to custom logo'),
+      '#description' => t('The path to the file you would like to use as your logo file instead of the default logo.'),
       '#default_value' => theme_get_setting('logo_path', $key),
     );
     $form['logo']['settings']['logo_upload'] = array(
@@ -497,8 +500,9 @@ function system_theme_settings($form, &$form_state, $key = '') {
     );
     $form['favicon']['default_favicon'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use the default shortcut icon supplied by the theme'),
+      '#title' => t('Use the default shortcut icon.'),
       '#default_value' => theme_get_setting('default_favicon', $key),
+      '#description' => t('Check here if you want the theme to use the default shortcut icon.')
     );
     $form['favicon']['settings'] = array(
       '#type' => 'container',
@@ -512,6 +516,7 @@ function system_theme_settings($form, &$form_state, $key = '') {
     $form['favicon']['settings']['favicon_path'] = array(
       '#type' => 'textfield',
       '#title' => t('Path to custom icon'),
+      '#description' => t('The path to the image file you would like to use as your custom shortcut icon.'),
       '#default_value' => theme_get_setting('favicon_path', $key),
     );
     $form['favicon']['settings']['favicon_upload'] = array(
@@ -521,8 +526,7 @@ function system_theme_settings($form, &$form_state, $key = '') {
     );
   }
 
-  // Inject human-friendly values and form element descriptions for logo and
-  // favicon.
+  // Inject human-friendly values for logo and favicon.
   foreach (array('logo' => 'logo.png', 'favicon' => 'favicon.ico') as $type => $default) {
     if (isset($form[$type]['settings'][$type . '_path'])) {
       $element = &$form[$type]['settings'][$type . '_path'];
@@ -535,26 +539,6 @@ function system_theme_settings($form, &$form_state, $key = '') {
         $friendly_path = file_uri_target($original_path);
         $element['#default_value'] = $friendly_path;
       }
-
-      // Prepare local file path for description.
-      if ($original_path && isset($friendly_path)) {
-        $local_file = strtr($original_path, array('public:/' => variable_get('file_public_path', conf_path() . '/files')));
-      }
-      elseif ($key) {
-        $local_file = drupal_get_path('theme', $key) . '/' . $default;
-      }
-      elseif (!empty($original_path)) {
-        $local_file = $original_path;
-      }
-      else {
-        $local_file = path_to_theme() . '/' . $default;
-      }
-
-      $element['#description'] = t('Examples: <code>@implicit-public-file</code> (for a file in the public filesystem), <code>@explicit-file</code>, or <code>@local-file</code>.', array(
-        '@implicit-public-file' => isset($friendly_path) ? $friendly_path : $default,
-        '@explicit-file' => file_uri_scheme($original_path) !== FALSE ? $original_path : 'public://' . $default,
-        '@local-file' => $local_file,
-      ));
     }
   }
 
@@ -1872,7 +1856,7 @@ function system_image_toolkit_settings() {
   if (count($toolkits_available) == 0) {
     variable_del('image_toolkit');
     $form['image_toolkit_help'] = array(
-      '#markup' => t("No image toolkits were detected. Drupal includes support for <a href='!gd-link'>PHP's built-in image processing functions</a> but they were not detected on this system. You should consult your system administrator to have them enabled, or try using a third party toolkit.", array('gd-link' => url('http://php.net/gd'))),
+      '#markup' => t("No image toolkits were detected. Drupal includes support for <a href='!gd-link'>PHP's built-in image processing functions</a> but they were not detected on this system. You should consult your system administrator to have them enabled, or try using a third party toolkit.", array('!gd-link' => url('http://php.net/gd'))),
     );
     return $form;
   }
@@ -2613,6 +2597,8 @@ function theme_status_report($variables) {
     if (empty($requirement['#type'])) {
       $severity = $severities[isset($requirement['severity']) ? (int) $requirement['severity'] : REQUIREMENT_OK];
       $severity['icon'] = '<div title="' . $severity['title'] . '"><span class="element-invisible">' . $severity['title'] . '</span></div>';
+      // The requirement's 'value' key is optional, provide a default value.
+      $requirement['value'] = isset($requirement['value']) ? $requirement['value'] : '';
 
       // Output table row(s)
       if (!empty($requirement['description'])) {

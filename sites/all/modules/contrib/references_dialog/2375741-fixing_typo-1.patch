@@ -1,0 +1,13 @@
+diff --git a/references_dialog.module b/references_dialog.module
+index 26b203e..70339a1 100644
+--- a/references_dialog.module
++++ b/references_dialog.module
+@@ -548,7 +548,7 @@ function references_dialog_close_on_submit() {
+ function references_dialog_views_api() {
+   return array(
+     'api' => 3,
+-    'path' => drupal_get_path('module', 'reference_dialog') . '/views',
++    'path' => drupal_get_path('module', 'references_dialog') . '/views',
+   );
+ }
+ 
