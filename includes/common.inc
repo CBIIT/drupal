@@ -2236,8 +2236,11 @@ function url($path = NULL, array $options = array()) {
     'prefix' => ''
   );
 
+  // Determine whether this is an external link, but ensure that the current
+  // path is always treated as internal by default (to prevent external link
+  // injection vulnerabilities).
   if (!isset($options['external'])) {
-    $options['external'] = url_is_external($path);
+    $options['external'] = $path === $_GET['q'] ? FALSE : url_is_external($path);
   }
 
   // Preserve the original path before altering or aliasing.
@@ -5098,8 +5101,6 @@ function drupal_build_js_cache($files) {
         $contents .= file_get_contents($path) . ";\n";
       }
     }
-    // Remove JS source and source mapping urls or these may cause 404 errors.
-    $contents = preg_replace('/\/\/(#|@)\s(sourceURL|sourceMappingURL)=\s*(\S*?)\s*$/m', '', $contents);
     // Prefix filename to prevent blocking by firewalls which reject files
     // starting with "ad*".
     $filename = 'js_' . drupal_hash_base64($contents) . '.js';
