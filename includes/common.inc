@@ -1094,6 +1094,11 @@ function drupal_http_request($url, array $options = array()) {
       elseif ($options['max_redirects']) {
         // Redirect to the new location.
         $options['max_redirects']--;
+
+        // We need to unset the 'Host' header
+        // as we are redirecting to a new location.
+        unset($options['headers']['Host']);
+
         $result = drupal_http_request($location, $options);
         $result->redirect_code = $code;
       }
@@ -5111,6 +5116,8 @@ function drupal_build_js_cache($files) {
         $contents .= file_get_contents($path) . ";\n";
       }
     }
+    // Remove JS source and source mapping urls or these may cause 404 errors.
+    $contents = preg_replace('/\/\/(#|@)\s(sourceURL|sourceMappingURL)=\s*(\S*?)\s*$/m', '', $contents);
     // Prefix filename to prevent blocking by firewalls which reject files
     // starting with "ad*".
     $filename = 'js_' . drupal_hash_base64($contents) . '.js';
